@@ -42,7 +42,7 @@ function QuotationPage() {
   // UI helpers
 
   const [suggestionOpen, setSuggestionOpen] = useState(false);
-  const API_BASE = "http://localhost:5000/api";
+  const API_BASE = "https://smarttechsolutions-4df8.onrender.com/api";
 
   // helper to create projectId: projectname-phoneno (sanitized)
   const makeProjectId = (projectName = "", phone = "") => {
@@ -1726,3 +1726,4 @@ function QuotationPage() {
 }
 
 export default QuotationPage;
+
