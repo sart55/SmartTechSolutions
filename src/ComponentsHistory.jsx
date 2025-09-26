@@ -6,7 +6,7 @@ function ComponentsHistory() {
   const [history, setHistory] = useState([]);
   const [page, setPage] = useState(1);
   const pageSize = 10;
-  const API_BASE = "http://localhost:5000/api";
+  const API_BASE = "https://smarttechsolutions-4df8.onrender.com//api";
 
   useEffect(() => {
     fetchHistory();
@@ -210,3 +210,4 @@ function ComponentsHistory() {
 }
 
 export default ComponentsHistory;
+
