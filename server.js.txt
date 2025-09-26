@@ -1,0 +1,224 @@
+//server.js
+import express from "express";
+import cors from "cors";
+import fs from "fs";
+import { initializeApp, cert } from "firebase-admin/app";
+import { getFirestore } from "firebase-admin/firestore";
+
+// ---------- Service account ----------
+let serviceAccount;
+if (process.env.SERVICE_ACCOUNT_JSON) {
+  serviceAccount = JSON.parse(process.env.SERVICE_ACCOUNT_JSON);
+} else if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+  serviceAccount = JSON.parse(
+    fs.readFileSync(process.env.GOOGLE_APPLICATION_CREDENTIALS, "utf8")
+  );
+} else {
+  serviceAccount = JSON.parse(fs.readFileSync("serviceAccountKey.json", "utf8"));
+}
+
+initializeApp({
+  credential: cert(serviceAccount),
+});
+
+const db = getFirestore();
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+// ---------- Helpers ----------
+const docIdFromName = (name = "") =>
+  name.trim().toLowerCase().replace(/\s+/g, "-");
+
+const mergeContributors = (existing = [], incoming = []) => {
+  const map = {};
+  existing.forEach((c) => {
+    map[c.name] = { name: c.name, date: c.date || null };
+  });
+  incoming.forEach((c) => {
+    if (!map[c.name]) {
+      map[c.name] = { name: c.name, date: null };
+    }
+    if (c.date) {
+      map[c.name].date = c.date; // overwrite with latest
+    }
+  });
+  return Object.values(map);
+};
+
+// ---------- Components API ----------
+app.get("/api/components", async (req, res) => {
+  try {
+    const snapshot = await db.collection("components").get();
+    const components = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    res.json(components);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ---------- Save component(s) ----------
+app.post("/api/components", async (req, res) => {
+  try {
+    const payload = Array.isArray(req.body) ? req.body : [req.body];
+    const results = [];
+
+    for (const comp of payload) {
+      if (!comp.name) continue;
+      const id = docIdFromName(comp.name);
+      const docRef = db.collection("components").doc(id);
+      const snap = await docRef.get();
+
+      if (snap.exists) {
+        const existing = snap.data();
+        const updatedQuantity =
+          (existing.quantity || 0) + (comp.quantity || 0);
+        const updatedPrice = comp.price ?? existing.price;
+        const updatedContributors = mergeContributors(
+          existing.contributors || [],
+          comp.contributors || []
+        );
+
+        await docRef.set(
+          {
+            name: comp.name,
+            price: updatedPrice,
+            quantity: updatedQuantity,
+            contributors: updatedContributors,
+          },
+          { merge: true }
+        );
+        results.push({ id, name: comp.name, merged: true });
+      } else {
+        await docRef.set({
+          name: comp.name,
+          price: comp.price || 0,
+          quantity: comp.quantity || 0,
+          contributors: comp.contributors || [],
+        });
+        results.push({ id, name: comp.name, merged: false });
+      }
+
+      // ✅ Log history with price
+      await db.collection("componentHistory").add({
+        name: comp.name,
+        quantity: comp.quantity,
+        price: comp.price || 0,
+        addedBy: comp.contributors?.[0]?.name || "Admin",
+        date: comp.contributors?.[0]?.date || new Date().toISOString(),
+      });
+    }
+
+    res.json({ success: true, results });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ---------- Update component ----------
+app.patch("/api/components/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updates = req.body;
+    const docRef = db.collection("components").doc(id);
+    const snap = await docRef.get();
+    if (!snap.exists) return res.status(404).json({ error: "Not found" });
+
+    if (updates.contributors) {
+      const existing = snap.data();
+      updates.contributors = mergeContributors(
+        existing.contributors || [],
+        updates.contributors
+      );
+    }
+
+    await docRef.set(updates, { merge: true });
+
+    // ✅ Log history for edits with price
+    if (updates.quantity !== undefined) {
+      await db.collection("componentHistory").add({
+        name: updates.name,
+        quantity: updates.quantity,
+        price: updates.price || 0,
+        addedBy: updates.contributors?.slice(-1)[0]?.name || "Admin",
+        date: updates.contributors?.slice(-1)[0]?.date || new Date().toISOString(),
+      });
+    }
+
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ---------- Delete Component ----------
+app.delete("/api/components/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    await db.collection("components").doc(id).delete();
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ---------- Fetch History ----------
+app.get("/api/components-history", async (req, res) => {
+  try {
+    const snapshot = await db
+      .collection("componentHistory")
+      .orderBy("date", "desc")
+      .get();
+    const history = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    res.json(history);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ---------- Deduct stock when quotation is saved ----------
+app.post("/api/update-stock", async (req, res) => {
+  try {
+    const { usedItems } = req.body;
+    if (!Array.isArray(usedItems)) {
+      return res.status(400).json({ error: "usedItems must be an array" });
+    }
+
+    for (const item of usedItems) {
+      const id = docIdFromName(item.name);
+      const docRef = db.collection("components").doc(id);
+      const snap = await docRef.get();
+      if (!snap.exists) continue;
+
+      const existing = snap.data();
+      const newQty = Math.max(
+        (existing.quantity || 0) - (item.quantity || 0),
+        0
+      );
+
+      await docRef.update({ quantity: newQty });
+    }
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error("Error updating stock:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ---------- Root ----------
+app.get("/", (req, res) =>
+  res.send("✅ Backend server is running...")
+);
+
+// ---------- Start ----------
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () =>
+  console.log(`Server running on http://localhost:${PORT}`)
+);
