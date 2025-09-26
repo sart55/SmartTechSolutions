@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./ChangePasswordPage.css";
 
-const BASE_URL = "http://localhost:5000"; // update if deployed
+const BASE_URL = "https://smarttechsolutions-4df8.onrender.com";
+ 
 
 function ChangePasswordPage() {
   const [oldPassword, setOldPassword] = useState("");
@@ -77,3 +78,4 @@ function ChangePasswordPage() {
 }
 
 export default ChangePasswordPage;
+
