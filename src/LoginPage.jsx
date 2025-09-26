@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./LoginPage.css";
 
-const BASE_URL = "http://localhost:5000";
-const SESSION_DURATION = 15 * 60 * 1000; // 15 minutes in ms
+const BASE_URL = "https://smarttechsolutions-4df8.onrender.com";
+const SESSION_DURATION = 30 * 60 * 1000; // 15 minutes in ms
 
 function LoginPage() {
   const [username, setUsername] = useState("");
@@ -90,3 +90,4 @@ function LoginPage() {
 }
 
 export default LoginPage;
+
