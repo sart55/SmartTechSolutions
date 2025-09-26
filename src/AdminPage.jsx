@@ -43,7 +43,7 @@ const [saving, setSaving] = useState(false);
   const rowsPerPage = 10;
 
   const navigate = useNavigate();
-  const API_BASE = "http://localhost:5000/api";
+  const API_BASE = "https://smarttechsolutions-4df8.onrender.com/api";
 
   useEffect(() => {
     loadComponents();
@@ -777,3 +777,4 @@ const saveComponents = async () => {
 }
 
 export default AdminPage;
+
