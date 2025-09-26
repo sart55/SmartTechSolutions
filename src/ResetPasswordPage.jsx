@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./ResetPasswordPage.css";
 
-const BASE_URL = "http://localhost:5000";
+const BASE_URL = "https://smarttechsolutions-4df8.onrender.com";
+
 
 function ResetPasswordPage() {
   const [username, setUsername] = useState("");
@@ -122,3 +123,4 @@ function ResetPasswordPage() {
 }
 
 export default ResetPasswordPage;
+
