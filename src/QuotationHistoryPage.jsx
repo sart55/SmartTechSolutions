@@ -52,7 +52,7 @@ const [paymentsDeleted, setPaymentsDeleted] = useState(false);
       setLoadingComments(false);
       return;
     }
-    fetch(`http://localhost:5000/api/comments/${projectId}`)
+    fetch(`https://smarttechsolutions-4df8.onrender.com/api/comments/${projectId}`)
       .then((res) => res.json())
       .then((data) => setComments(Array.isArray(data) ? data : []))
       .catch((err) => console.error("Error fetching comments:", err))
@@ -71,7 +71,7 @@ const [paymentsDeleted, setPaymentsDeleted] = useState(false);
   const handleDeleteComments = async () => {
     if (!window.confirm("Do you want to delete all comments for this project?")) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/comments/${projectId}`, {
+      const res = await fetch(`https://smarttechsolutions-4df8.onrender.com/api/comments/${projectId}`, {
         method: "DELETE",
       });
       const data = await res.json();
@@ -108,7 +108,7 @@ const handleDeletePayments = async () => {
   if (!window.confirm("Delete all payment history for this project?")) return;
   try {
     const res = await fetch(
-      `http://localhost:5000/api/customers/${projectId}/payments`,
+      `https://smarttechsolutions-4df8.onrender.com/api/customers/${projectId}/payments`,
       { method: "DELETE" }
     );
     const data = await res.json();
@@ -449,4 +449,5 @@ const handleDeletePayments = async () => {
 }
 
 export default QuotationHistoryPage;
+
 
