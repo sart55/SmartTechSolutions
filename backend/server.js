@@ -636,13 +636,11 @@ const emailOtpStore = {};
 const mailTransporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: "smarttechsolutions81@gmail.com",       // sender Gmail
-    pass: process.env.GMAIL_APP_PASSWORD || "gkqixdwrqrhwlmti"  // set in .env
-
-
-
+    user: process.env.GMAIL_USER,
+    pass: process.env.GMAIL_APP_PASSWORD,
   },
 });
+
 // console.log("GMAIL_USER:", process.env.GMAIL_USER);
 // console.log("GMAIL_APP_PASSWORD:", process.env.GMAIL_APP_PASSWORD);
 
@@ -711,3 +709,4 @@ app.post("/api/admins/verify-email-otp", async (req, res) => {
 app.listen(PORT, () =>
   console.log(`Server running on http://localhost:${PORT}`)
 );
+
