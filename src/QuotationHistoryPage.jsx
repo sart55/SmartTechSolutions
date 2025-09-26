@@ -32,7 +32,7 @@ const [paymentsDeleted, setPaymentsDeleted] = useState(false);
 
   // Fetch customer & quotations history
   useEffect(() => {
-  fetch(`http://localhost:5000/api/projects/${projectId}/history`)
+  fetch(`https://smarttechsolutions-4df8.onrender.com/api/projects/${projectId}/history`)
     .then((res) => res.json())
     .then((data) => {
       if (data.customer) {
@@ -449,3 +449,4 @@ const handleDeletePayments = async () => {
 }
 
 export default QuotationHistoryPage;
+
