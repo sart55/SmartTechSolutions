@@ -13,7 +13,7 @@ function AllProjectsPage() {
   const pageSize = 8; // ✅ show 8 projects per page
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/projects")
+    fetch("https://smarttechsolutions-4df8.onrender.com/api/projects")
       .then((res) => res.json())
       .then((data) => {
         setProjects({
@@ -274,3 +274,4 @@ function AllProjectsPage() {
 }
 
 export default AllProjectsPage;
+
