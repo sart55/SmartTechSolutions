@@ -24,7 +24,7 @@ function TempQuotationPage() {
   const [customerBranch, setCustomerBranch] = useState("");
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/components")
+    fetch("https://smarttechsolutions-4df8.onrender.com/api/components")
       .then((res) => res.json())
       .then((data) => setAllComponents(data))
       .catch((err) => console.error("Error fetching components:", err));
@@ -368,3 +368,4 @@ function TempQuotationPage() {
 }
 
 export default TempQuotationPage;
+
