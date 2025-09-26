@@ -1,0 +1,280 @@
+/* QuotationPage.css
+   Responsive layout and small UI helpers moved from the component.
+   NOTE: This file intentionally only contains layout/responsive rules and
+   helper styles. All colours and visual tokens from your JSX are preserved.
+*/
+
+
+
+/* Grid for create + history (desktop) */
+.quotation-grid {
+  box-sizing: border-box;
+  width: 100%;
+  margin-top: 12px;
+}
+/* Prevent the page itself from growing wider */
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Contain the table */
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;           /* only this box can scroll horizontally */
+  -webkit-overflow-scrolling: touch;
+}
+
+.table-wrapper .table {
+  min-width: 600px;           /* keep columns readable */
+  width: max-content;         /* shrink-to-fit content instead of forcing parent wider */
+}
+
+.add-btn{
+    backgroundColor: "#1976d2";
+    color: "white";
+    border: "none";
+    padding: "8px 16px";
+    borderRadius: "4px";
+    fontSize: "14px";
+    cursor: "pointer;
+}
+
+
+/* Desktop: two columns */
+@media (min-width: 901px) {
+  .quotation-grid {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 16px;
+    align-items: start;
+  }
+
+  .create-col {
+    width: auto;
+  }
+
+  .history-col {
+    width: 360px;
+  }
+}
+
+/* Mobile/tablet: single column stacked */
+@media (max-width: 900px) {
+  .quotation-grid {
+    display: block;
+  }
+
+  .create-col,
+  .history-col {
+    width: 100%;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  .create-col {
+    margin-bottom: 16px;
+  }
+
+  /* Ensure the customer card stacks nicely on small widths */
+  .customer-card {
+    flex-direction: column !important;
+  }
+
+  .customer-left {
+    width: 100% !important;
+    margin-right: 0 !important;
+  }
+}
+
+/* Suggestions list */
+.suggestions-list {
+  position: absolute;
+  top: 42px;
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 1px solid #ccc;
+  max-height: 180px;
+  overflow-y: auto;
+  z-index: 50;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Table styling helpers */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+
+/* Totals */
+.total {
+  margin-top: 8px;
+  font-weight: 600;
+}
+
+/* Payments section small helpers */
+.payments-section input,
+.payments-section select,
+.payments-section button {
+  margin-right: 8px;
+}
+
+/* Make buttons wrap on small screens */
+@media (max-width: 520px) {
+  .payments-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .payments-section input,
+  .payments-section select,
+  .payments-section button {
+    width: 100% !important;
+    margin-right: 0 !important;
+  }
+
+  .component-search-row {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .component-search-row > div[style] {
+    width: 100% !important;
+  }
+}
+
+/* Small adjustment to keep the suggestions clickable on mobile */
+.suggestions-list li {
+  touch-action: manipulation;
+}
+
+/* History column scroll on small screens if long */
+@media (max-width: 900px) {
+  .history-col {
+    margin-top: 12px;
+  }
+}
+
+
+
+/* Avoid overriding global .btn rules — keep minimal */
+/* Horizontal scroll for tables on small screens */
+.table-container {
+  width: 100%;
+  overflow-x: auto;       /* enables horizontal scrolling if needed */
+}
+
+.table-container .table {
+  min-width: 600px;       /* keeps columns readable */
+}
+
+/* ============================
+   ADDED RESPONSIVE FIXES
+   Prevent page from widening and ensure the table scrolls only inside its container.
+   These rules were added to stop global horizontal overflow when components are added.
+   ============================ */
+
+/* Global page guard */
+html, body, #root {
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+  box-sizing: border-box !important;
+}
+
+/* Ensure main layout containers never force page to overflow */
+.layout, .quotation-grid, .create-col, .history-col, .customer-card, .customer-left {
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  min-width: 0 !important; /* allow these flex/grid children to shrink */
+  overflow-x: hidden !important;
+}
+
+/* Let flex/grid children shrink instead of forcing parent wider */
+.quotation-grid > *, .create-col, .history-col, .customer-card, .customer-left {
+  min-width: 0 !important;
+}
+
+/* Component search / payments small-screen behaviour */
+.component-search-row, .payments-section {
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+}
+
+/* Prevent inputs/selects/buttons from forcing width */
+.component-search-row input,
+.component-search-row select,
+.component-search-row button,
+.payments-section input,
+.payments-section select,
+.payments-section button {
+  max-width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* Table wrapper: ONLY this container is allowed to scroll horizontally */
+.table-wrapper, .table-container {
+  width: 100% !important;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
+/* Let the table keep its intrinsic width without stretching the page */
+.table-wrapper .table, .table-container .table {
+  width: max-content !important;
+  min-width: 480px !important; /* adjust if you prefer a different minimum */
+  box-sizing: border-box !important;
+}
+
+/* Ensure the table itself doesn't expand the page */
+.table {
+  max-width: none !important;
+}
+
+/* Small screens: stack and allow full width */
+@media (max-width: 900px) {
+  .quotation-grid {
+    display: block !important;
+    overflow-x: hidden !important;
+  }
+
+  .create-col, .history-col {
+    width: 100% !important;
+    padding: 0 !important;
+  }
+
+  .customer-card {
+    flex-direction: column !important;
+  }
+
+  .customer-left {
+    width: 100% !important;
+    margin-right: 0 !important;
+  }
+
+  /* Make the table wrapper visible and touch-scrollable on phones */
+  .table-wrapper .table, .table-container .table {
+    min-width: 420px !important;
+  }
+}
+
+/* Extra safety: if any element still overflows, make it wrap */
+* {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+

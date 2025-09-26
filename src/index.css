@@ -1,0 +1,22 @@
+/* === FINAL global guard against horizontal overflow === */
+html, body, #root, .layout, .body, .content,
+.quotation-grid, .quotation-grid > *, .create-col, .history-col,
+.customer-card, .customer-left {
+  box-sizing: border-box !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  overflow-x: hidden !important;
+  flex-shrink: 1 !important;   /* force flex items to shrink */
+}
+
+/* Ensure only the table wrapper can scroll horizontally */
+.table-wrapper {
+  width: 100% !important;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table-wrapper .table {
+  width: max-content !important;
+  min-width: 480px !important;
+}

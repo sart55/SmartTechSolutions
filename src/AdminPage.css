@@ -1,0 +1,268 @@
+/* AdminPage.css
+   Full responsive styles for AdminPage.jsx
+   - Prevents page-level horizontal scrolling
+   - Keeps tables inside a horizontally scrollable wrapper
+   - Shortens action buttons to E/D on small screens
+*/
+
+/* base: avoid page-level overflow */
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* make box-sizing consistent */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* Wrapper and content spacing */
+.admin-wrapper {
+  padding: 18px;
+  box-sizing: border-box;
+  width: 100%;
+}
+.admin-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+  padding-left: 12px;
+  padding-right: 12px;
+}
+
+/* Input row: place inputs in a row on large screens */
+.admin-input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  position: relative;
+  /* reserve space for the absolute badge so inputs won't push page width */
+  padding-right: 180px;
+}
+
+/* For narrow screens, remove badge padding (badge flows in document) */
+@media (max-width: 900px) {
+  .admin-input-row {
+    padding-right: 0;
+  }
+}
+
+/* Suggestions list */
+.suggestions-list {
+  background: #fff;
+  border: 1px solid #ddd;
+  max-height: 220px;
+  overflow-y: auto;
+  width: 250px;
+  padding: 6px 0;
+  border-radius: 4px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+  box-sizing: border-box;
+}
+.suggestions-list li {
+  padding: 8px 10px;
+  cursor: pointer;
+}
+.suggestions-list li:hover {
+  background: #f3f6ff;
+}
+
+/* Badge */
+.total-badge {
+  font-size: 0.95rem;
+  background: #fff4e6;
+  color: #8a5a00;
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-weight: 600;
+  position: absolute;
+  right: 0;
+  top: 0;
+  white-space: nowrap;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.05);
+}
+
+/* Excel upload area */
+.excel-upload {
+  margin-top: 6px;
+  margin-bottom: 18px;
+}
+
+/* Table responsive wrapper */
+.table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 12px;
+}
+
+/* Table baseline styles */
+.table-responsive table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 680px; /* keeps layout for many columns; on small screens wrapper will scroll */
+}
+.table-responsive th,
+.table-responsive td {
+  padding: 10px;
+  border: 1px solid #e2e8f0;
+  text-align: left;
+  vertical-align: middle;
+}
+.table-responsive th {
+  background: #f8fafc;
+  font-weight: 700;
+}
+
+/* Word wrap for long content */
+.table-responsive td, .table-responsive th {
+  word-break: break-word;
+}
+
+/* Buttons baseline */
+button {
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  background: #f3f4f6;
+}
+button[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+button:hover:not([disabled]) {
+  filter: brightness(0.98);
+}
+
+/* Notification center */
+.notify {
+  padding: 12px 18px;
+  background: #f0fdf4;
+  border: 1px solid #d1fae5;
+  color: #064e3b;
+  border-radius: 8px;
+  display: inline-block;
+  min-width: 180px;
+  text-align: center;
+}
+
+/* Action buttons styling (Edit/Delete) */
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  cursor: pointer;
+  min-height: 40px;
+}
+
+/* Full text visible by default, short text hidden */
+.action-btn .full-text { display: inline; }
+.action-btn .short-text { display: none; }
+
+/* Buttons for edit/delete can have different visuals if you want */
+.edit-action .full-text::before { content: ""; margin-right:6px; }
+.delete-action .full-text::before { content: ""; margin-right:6px; }
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 12px;
+  align-items: center;
+}
+
+/* Tiny screens adjustments */
+@media (max-width: 900px) {
+  .admin-content {
+    padding: 8px;
+  }
+
+  .admin-input-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .admin-input-row input,
+  .admin-input-row select,
+  .admin-input-row button {
+    width: 100% !important;
+    box-sizing: border-box;
+  }
+
+  /* Make suggestions appear full width under input */
+  .suggestions-list {
+    position: relative;
+    width: 100%;
+    max-width: none;
+  }
+
+  .total-badge {
+    position: relative !important;
+    right: auto !important;
+    top: auto !important;
+    margin-top: 8px;
+    align-self: flex-start;
+  }
+
+  .table-responsive table {
+    min-width: 100%;
+  }
+
+  .table-responsive th,
+  .table-responsive td {
+    padding: 8px;
+    font-size: 14px;
+  }
+
+  .notify {
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
+
+/* Very small screens: switch Edit/Delete labels to E / D */
+@media (max-width: 480px) {
+  .table-responsive th,
+  .table-responsive td {
+    padding: 6px;
+    font-size: 13px;
+  }
+
+  .admin-input-row input,
+  .admin-input-row select,
+  .admin-input-row button {
+    padding: 10px;
+  }
+
+  /* Hide long label, show short letter */
+  .action-btn .full-text { display: none; }
+  .action-btn .short-text { display: inline-block; font-weight: 700; }
+
+  /* Make action buttons compact */
+  .action-btn { padding: 6px; min-width: 36px; height: 36px; border-radius: 6px; }
+}
+/* 🔵 Rotating circle spinner */
+.spinner {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 3px solid #ccc;
+  border-top: 3px solid #007bff; /* blue highlight */
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

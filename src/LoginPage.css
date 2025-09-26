@@ -1,0 +1,122 @@
+/* Remove scrollbars and force full-screen layout */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  /* overflow: hidden;           🚫 no scrolling */
+  overflow-y: scroll;            /* ✅ scrolling enabled */
+  scrollbar-width: none;         /* ✅ hide scrollbar in Firefox */
+  -ms-overflow-style: none;      /* ✅ hide scrollbar in IE/Edge */
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+
+/* Soft gradient background covering full viewport */
+.login-container {
+  height: 100vh;
+  width: 100vw;
+ background: linear-gradient(135deg, #000000 0%, #6bc7f2 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+/* ✨ Company name with gradient animation */
+.company-title {
+  font-size: 36px;
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 40px;
+  background: linear-gradient(90deg, #2563eb, #00bcd4, #2563eb);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  opacity: 0;
+  transform: translateY(-30px);
+  transition: opacity 1.2s ease, transform 1.2s ease;
+  pointer-events: none;     /* ✅ Prevent mouse interactions */
+  user-select: none;        /* ✅ Prevent text selection */
+}
+.company-title span {
+  color: transparent;
+}
+.company-title.animate {
+   font-size: 3rem;
+  opacity: 1;
+  transform: translateY(0);
+  animation: shine 4s linear infinite;
+}
+@keyframes shine {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Card */
+.login-card {
+  background: #ffffff;
+  padding: 40px 30px;
+  border-radius: 14px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 380px;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.login-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+}
+
+.login-card h2 {
+  margin-bottom: 25px;
+  font-size: 22px;
+  color: #203040;
+}
+
+/* Inputs */
+.login-card input {
+  width: 95%;
+  padding: 12px;
+  margin-bottom: 18px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+.login-card input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 6px rgba(37, 99, 235, 0.4);
+}
+
+/* Buttons */
+.btn-primary {
+  width: 100%;
+  padding: 12px;
+  background: #2563eb;
+  color: white;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background 0.3s;
+}
+.btn-primary:hover {
+  background: #1d4ed8;
+}
+
+.btn-link {
+  margin-top: 15px;
+  background: none;
+  border: none;
+  color: #2563eb;
+  font-size: 15px;
+  cursor: pointer;
+  text-decoration: underline;
+}
+.btn-link:hover {
+  color: #1d4ed8;
+}
