@@ -17,7 +17,7 @@ function CustomerDetailsPage() {
   const [loading, setLoading] = useState(false);
   const [warning, setWarning] = useState("");
   const navigate = useNavigate();
-  const API_BASE = "http://localhost:5000/api";
+  const API_BASE = "https://smarttechsolutions-4df8.onrender.com/api";
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -180,5 +180,6 @@ export default CustomerDetailsPage;
 
 
 // End of file - padded to keep original length
+
 
 
