@@ -179,9 +179,9 @@ function TempQuotationPage() {
       doc.setFont("helvetica", "bold");
       doc.setTextColor(0, 0, 0);
       doc.text("Contact Details:", 20, finalY + 30);
-      doc.text("7558679704", 20, finalY + 40);
-      doc.text("______________________________", 20, finalY + 50);
-      doc.text("______________________________", 20, finalY + 60);
+      doc.text("8805205049", 20, finalY + 40);
+      doc.text("8055335650", 20, finalY + 50);
+      doc.text("8446052814", 20, finalY + 60);
 
       doc.save(`${customerName}-${customerContact}.pdf`);
     } catch (err) {
@@ -368,4 +368,5 @@ function TempQuotationPage() {
 }
 
 export default TempQuotationPage;
+
 
