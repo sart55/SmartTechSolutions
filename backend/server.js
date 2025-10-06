@@ -46,15 +46,25 @@ app.use(express.json());
 // ---------- Helpers ----------
 // Safe version of docIdFromName
 // Always-safe version
+// Always-safe version (prevents .toLowerCase crash)
 const docIdFromName = (name) => {
-  if (typeof name !== "string") {
-    console.warn("⚠️ Non-string name passed to docIdFromName:", name);
+  try {
+    if (name === undefined || name === null) return "unnamed";
+    if (typeof name !== "string") {
+      // Try to stringify object safely
+      if (typeof name === "object") {
+        name = JSON.stringify(name);
+      } else {
+        name = String(name);
+      }
+    }
+    return name.trim().toLowerCase().replace(/\s+/g, "-");
+  } catch (err) {
+    console.error("❌ docIdFromName failed:", err, "for name:", name);
+    return "invalid-name";
   }
-  return String(name || "")
-    .trim()
-    .toLowerCase()
-    .replace(/\s+/g, "-");
 };
+
 
 const mergeContributors = (existing = [], incoming = []) => {
   const map = {};
@@ -741,6 +751,7 @@ app.post("/api/admins/verify-email-otp", async (req, res) => {
 app.listen(PORT, () =>
   console.log(`Server running on http://localhost:${PORT}`)
 );
+
 
 
 
