@@ -27,6 +27,20 @@ if (process.env.SERVICE_ACCOUNT_JSON) {
 initializeApp({
   credential: cert(serviceAccount),
 });
+app.use(
+  cors({
+    origin: [
+      "http://localhost:3000",                // local dev
+      "https://smart-tech-solutions.vercel.app" // your deployed frontend
+    ],
+    methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
+  })
+);
+
+// Optional: respond properly to OPTIONS preflight
+app.options("*", cors());
 
 const db = getFirestore();
 const app = express();
@@ -751,6 +765,7 @@ app.post("/api/admins/verify-email-otp", async (req, res) => {
 app.listen(PORT, () =>
   console.log(`Server running on http://localhost:${PORT}`)
 );
+
 
 
 
