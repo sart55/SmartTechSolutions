@@ -6,6 +6,7 @@ import "./Layout.css";
 import "./AdminPage.css";
 import Layout from "./Layout";
 
+
 /*
   Full AdminPage.jsx — retains all original functionality:
   - add/edit/delete components
@@ -152,54 +153,71 @@ const [saving, setSaving] = useState(false);
   // -------------------------------
   // Excel upload
   // -------------------------------
-  const handleExcelUpload = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+ // -------------------------------
+// Excel upload (safe version)
+// -------------------------------
+const handleExcelUpload = (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = (evt) => {
-      try {
-        const data = new Uint8Array(evt.target.result);
-        const workbook = XLSX.read(data, { type: "array" });
-        const sheetName = workbook.SheetNames[0];
-        const sheet = workbook.Sheets[sheetName];
-        const rows = XLSX.utils.sheet_to_json(sheet);
-console.log("Parsed Excel data:", rows);
+  const reader = new FileReader();
+  reader.onload = (evt) => {
+    try {
+      const data = new Uint8Array(evt.target.result);
+      const workbook = XLSX.read(data, { type: "array" });
+      const sheetName = workbook.SheetNames[0];
+      const sheet = workbook.Sheets[sheetName];
+      const rows = XLSX.utils.sheet_to_json(sheet);
+      console.log("Parsed Excel data:", rows);
 
-        const nowIso = new Date().toISOString();
+      const nowIso = new Date().toISOString();
 
-        const imported = rows.map((row) => {
-          // row may contain "name", "componentName", "price", "quantity", "contributors"
-          const rawName = row.name || row.componentName || "";
-          const rawPrice = row.price || 0;
-          const rawQuantity = row.quantity || 0;
+      const imported = rows
+        .map((row) => {
+          // Sanitize name safely
+          let rawName = row.name || row.componentName || "";
+          if (typeof rawName !== "string") rawName = String(rawName).trim();
+          rawName = rawName.trim();
+
+          // Skip invalid or blank names
+          if (!rawName) return null;
+
+          const rawPrice = Number(row.price) || 0;
+          const rawQuantity = Number(row.quantity) || 0;
           const rawContributor = row.contributors || row.addedBy || "Admin";
 
-          // normalize contributor object
           const contribObj = {
-            name: typeof rawContributor === "string" ? normalizeNameCase(rawContributor) : normalizeNameCase(rawContributor.name || "Admin"),
+            name:
+              typeof rawContributor === "string"
+                ? normalizeNameCase(rawContributor)
+                : normalizeNameCase(rawContributor?.name || "Admin"),
             date: nowIso,
           };
 
           return {
             name: rawName,
-            price: Number(rawPrice) || 0,
-            quantity: Number(rawQuantity) || 0,
+            price: rawPrice,
+            quantity: rawQuantity,
             contributors: [contribObj],
           };
-        });
+        })
+        .filter(Boolean); // remove nulls
 
-        // When importing from Excel, multiple rows might refer to same component.
-        // We'll append them to pending; subsequent Save will normalize and merge duplicates.
-        setLastAddSource("excel");
-        setPendingComponents((prev) => [...prev, ...imported]);
-      } catch (err) {
-        console.error("Error parsing excel:", err);
-        alert("Failed to parse Excel file. Check the file format.");
+      if (imported.length === 0) {
+        alert("⚠️ No valid rows found in Excel file.");
+        return;
       }
-    };
-    reader.readAsArrayBuffer(file);
+
+      setLastAddSource("excel");
+      setPendingComponents((prev) => [...prev, ...imported]);
+    } catch (err) {
+      console.error("Error parsing excel:", err);
+      alert("❌ Failed to parse Excel file. Please check the file format.");
+    }
   };
+  reader.readAsArrayBuffer(file);
+};
+
 
   // -------------------------------
   // Suggestions for component name
@@ -778,5 +796,6 @@ const saveComponents = async () => {
 }
 
 export default AdminPage;
+
 
 
