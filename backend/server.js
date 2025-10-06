@@ -387,7 +387,10 @@ app.post("/api/update-stock", async (req, res) => {
     }
 
     for (const item of usedItems) {
-      const id = docIdFromName(item.name);
+      const id = typeof item.name === "string"
+  ? item.name.toLowerCase()
+  : String(item.name || "").toLowerCase();
+
       const ref = db.collection("components").doc(id);
       const snap = await ref.get();
       if (snap.exists) {
@@ -738,6 +741,7 @@ app.post("/api/admins/verify-email-otp", async (req, res) => {
 app.listen(PORT, () =>
   console.log(`Server running on http://localhost:${PORT}`)
 );
+
 
 
 
