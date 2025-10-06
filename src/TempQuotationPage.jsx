@@ -183,7 +183,7 @@ function TempQuotationPage() {
       doc.text("8055335650", 20, finalY + 50);
       doc.text("8446052814", 20, finalY + 60);
 
-      doc.save(`${customerName}-${customerContact}.pdf`);
+      doc.save(`${projectName}-${customerContact}.pdf`);
     } catch (err) {
       console.error("Error generating PDF:", err);
       alert("Something went wrong while generating the PDF.");
@@ -368,5 +368,6 @@ function TempQuotationPage() {
 }
 
 export default TempQuotationPage;
+
 
 
