@@ -34,24 +34,37 @@ app.use(cors());
 app.use(express.json());
 
 // ---------- Helpers ----------
+// Safe version of docIdFromName
 const docIdFromName = (name = "") =>
-  name.trim().toLowerCase().replace(/\s+/g, "-");
+  String(name || "")
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, "-");
 
+// Safe version of mergeContributors
 const mergeContributors = (existing = [], incoming = []) => {
   const map = {};
+
   existing.forEach((c) => {
-    map[c.name] = { name: c.name, date: c.date || null };
+    const name = String(c?.name || "");  // ensure it's always a string
+    if (!name) return; // skip if empty
+    map[name] = { name, date: c?.date || null };
   });
+
   incoming.forEach((c) => {
-    if (!map[c.name]) {
-      map[c.name] = { name: c.name, date: null };
+    const name = String(c?.name || "");
+    if (!name) return; // skip if empty
+    if (!map[name]) {
+      map[name] = { name, date: null };
     }
-    if (c.date) {
-      map[c.name].date = c.date; // overwrite with latest
+    if (c?.date) {
+      map[name].date = c.date; // overwrite with latest
     }
   });
+
   return Object.values(map);
 };
+
 
 // =====================================================
 // ================  Admins API  =======================
@@ -709,4 +722,5 @@ app.post("/api/admins/verify-email-otp", async (req, res) => {
 app.listen(PORT, () =>
   console.log(`Server running on http://localhost:${PORT}`)
 );
+
 
