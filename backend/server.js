@@ -35,28 +35,33 @@ app.use(express.json());
 
 // ---------- Helpers ----------
 // Safe version of docIdFromName
-const docIdFromName = (name = "") =>
-  String(name || "")
+// Always-safe version
+const docIdFromName = (name) => {
+  if (typeof name !== "string") {
+    console.warn("⚠️ Non-string name passed to docIdFromName:", name);
+  }
+  return String(name || "")
     .trim()
     .toLowerCase()
     .replace(/\s+/g, "-");
+};
 
-// Safe version of mergeContributors
 const mergeContributors = (existing = [], incoming = []) => {
   const map = {};
 
-  existing.forEach((c) => {
-    const name = String(c?.name || "");  // ensure it's always a string
-    if (!name) return; // skip if empty
-    map[name] = { name, date: c?.date || null };
-  });
+  [...existing, ...incoming].forEach((c) => {
+    const rawName = c?.name ?? "";
+    const name = String(rawName);
 
-  incoming.forEach((c) => {
-    const name = String(c?.name || "");
-    if (!name) return; // skip if empty
+    if (!name.trim()) {
+      console.warn("⚠️ Contributor skipped (invalid name):", c);
+      return;
+    }
+
     if (!map[name]) {
       map[name] = { name, date: null };
     }
+
     if (c?.date) {
       map[name].date = c.date; // overwrite with latest
     }
@@ -64,6 +69,7 @@ const mergeContributors = (existing = [], incoming = []) => {
 
   return Object.values(map);
 };
+
 
 
 // =====================================================
@@ -722,5 +728,6 @@ app.post("/api/admins/verify-email-otp", async (req, res) => {
 app.listen(PORT, () =>
   console.log(`Server running on http://localhost:${PORT}`)
 );
+
 
 
