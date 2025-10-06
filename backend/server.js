@@ -30,7 +30,17 @@ initializeApp({
 
 const db = getFirestore();
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: "*",          // or your frontend domain
+  methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+}));
+app.options("*", cors());
+app.use((err, req, res, next) => {
+  console.error("🔥 Server Error:", err);
+  res.status(500).json({ error: "Internal Server Error", details: err.message });
+});
+
 app.use(express.json());
 
 // ---------- Helpers ----------
@@ -728,6 +738,7 @@ app.post("/api/admins/verify-email-otp", async (req, res) => {
 app.listen(PORT, () =>
   console.log(`Server running on http://localhost:${PORT}`)
 );
+
 
 
 
