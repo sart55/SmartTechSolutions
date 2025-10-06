@@ -168,7 +168,7 @@ const handleExcelUpload = (e) => {
       const sheetName = workbook.SheetNames[0];
       const sheet = workbook.Sheets[sheetName];
       const rows = XLSX.utils.sheet_to_json(sheet);
-      console.log("Parsed Excel data:", rows);
+      //console.log("Parsed Excel data:", rows);
 
       const nowIso = new Date().toISOString();
 
@@ -796,6 +796,7 @@ const saveComponents = async () => {
 }
 
 export default AdminPage;
+
 
 
 
