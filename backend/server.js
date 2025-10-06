@@ -27,6 +27,9 @@ if (process.env.SERVICE_ACCOUNT_JSON) {
 initializeApp({
   credential: cert(serviceAccount),
 });
+
+const db = getFirestore();
+const app = express();
 app.use(
   cors({
     origin: [
@@ -42,13 +45,6 @@ app.use(
 // Optional: respond properly to OPTIONS preflight
 app.options("*", cors());
 
-const db = getFirestore();
-const app = express();
-app.use(cors({
-  origin: "*",          // or your frontend domain
-  methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-}));
 app.options("*", cors());
 app.use((err, req, res, next) => {
   console.error("🔥 Server Error:", err);
@@ -765,8 +761,6 @@ app.post("/api/admins/verify-email-otp", async (req, res) => {
 app.listen(PORT, () =>
   console.log(`Server running on http://localhost:${PORT}`)
 );
-
-
 
 
 
