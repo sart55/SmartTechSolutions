@@ -303,7 +303,7 @@ html, body, #root {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(66, 64, 228, 0.7);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -327,6 +327,7 @@ html, body, #root {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
 
 
 
