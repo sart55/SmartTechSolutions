@@ -477,7 +477,7 @@ function QuotationPage() {
       alert("Add components before saving quotation.");
       return;
     }
-
+setLoadingQuotation(true);
     try {
       // Build projectId if we have customerDetails
       let pid = null;
@@ -520,6 +520,7 @@ function QuotationPage() {
             "Warning: Error when saving customer to backend. Quotation will still proceed locally."
           );
         }
+       
       }
 
       // 2) Deduct stock in backend
@@ -578,6 +579,9 @@ function QuotationPage() {
       console.error("Failed to save quotation:", err);
       alert("Failed to save quotation. Please try again.");
     }
+      finally {
+    setLoadingQuotation(false); // 👈 stop spinner
+  }
   };
 
   // Full styled PDF generation (kept intact as in your original file)
@@ -954,6 +958,7 @@ function QuotationPage() {
       alert("Please enter an amount.");
       return;
     }
+     setLoadingPayment(true); // 👈 start spinner
     if (!key) {
       alert(
         "Customer must be saved before recording payments. Save customer / quotation first."
@@ -1001,7 +1006,9 @@ function QuotationPage() {
     } catch (err) {
       console.error("Error saving payment:", err);
       alert("Failed to save payment. Check console for details.");
-    }
+    }finally {
+    setLoadingPayment(false); // ✅ always stop spinner
+  }
   };
 
   // ---------------------------
@@ -1038,7 +1045,7 @@ function QuotationPage() {
       admin: adminName,
       date: new Date().toISOString(),
     };
-
+  setLoadingComments(true); // 🔵 start spinner
     try {
       const res = await fetch(`${API_BASE}/comments`, {
         method: "POST",
@@ -1059,6 +1066,9 @@ function QuotationPage() {
       console.error("Failed to save comment:", err);
       alert("Failed to save comment. See console.");
     }
+    finally {
+    setLoadingComments(false); // 🔵 stop spinner
+  }
   };
 
   // ---------------------------
@@ -1101,7 +1111,12 @@ function QuotationPage() {
 
   return (
     <Layout>
-      
+      {initialLoading && (
+  <div className="loading-overlay">
+    <div className="loader"></div>
+  </div>
+)}
+
       <div>
         {/* Customer Details Section */}
         <div
@@ -1334,10 +1349,14 @@ function QuotationPage() {
                     <option value="online">Online</option>
                   </select>
                   <button
-                    className="btn btn-primary"
-                    onClick={handleSavePayment}
-                    style={{background:"#1976d2"}}
-                  >
+  className="btn btn-primary"
+  onClick={handleSavePayment}
+  style={{ background: "#1976d2", minWidth: "140px" }}
+  disabled={loadingPayment}
+>
+  {loadingPayment ? <div className="loader"></div> : "Save Payment"}
+</button>
+
                     Save Payment
                   </button>
                 </div>
@@ -1569,11 +1588,14 @@ function QuotationPage() {
 
               <div style={{ marginTop: 12, display: "flex", gap: 10 }}>
                 <button
-                  className="btns btn btn-primary"
-                  style={{ width: "30%", background:"#1976d2",padding:"2px"}}
-                  
-                  onClick={saveQuotation}
-                >
+  className="btns btn btn-primary"
+  style={{ width: "30%", background: "#1976d2", padding: "2px" }}
+  onClick={saveQuotation}
+  disabled={loadingQuotation}
+>
+  {loadingQuotation ? <div className="loader"></div> : "Save Quotation"}
+</button>
+
                   Save Quotation
                 </button>
                 <button className="btns btn btn-primary" onClick={closeProject} style={{backgroundColor:"rgb(229, 57, 53)",width:"30%"}}>
@@ -1645,8 +1667,8 @@ function QuotationPage() {
 
                 <div style={{ marginTop: 12 }}>
                   {loadingComments ? (
-                    <div>Loading comments...</div>
-                  ) : comments && comments.length > 0 ? (
+  <div className="loader"></div>
+) : comments && comments.length > 0 ? (
                     <ul style={{ paddingLeft: 18 }}>
                       {comments.map((c, idx) => (
                         <li key={idx} style={{ marginBottom: 8 }}>
@@ -1734,6 +1756,7 @@ function QuotationPage() {
 }
 
 export default QuotationPage;
+
 
 
 
