@@ -102,117 +102,119 @@ function QuotationPage() {
   }, [projectId]);
 
   // NEW: if opened with projectId (from AllProjectsPage), fetch customer & quotations from backend
- useEffect(() => {
-  if (!projectId) return;
+  useEffect(() => {
+    if (!projectId) return;
 
-  // ✅ Skip fetch if this is a *new* project that isn't yet saved to backend
-  const isNewProject =
-    !customerDetails && (!quotations || quotations.length === 0);
-  if (isNewProject) {
-    console.log("Skipping backend fetch — new project (no data yet)");
-    setInitialLoading(false);
-    return;
-  }
-
-  const fetchHistory = async () => {
-    setInitialLoading(true);
-    try {
-      // ---------------- FETCH CUSTOMER DETAILS ----------------
-      const custRes = await fetch(
-        `${API_BASE}/customers/${encodeURIComponent(projectId)}`
-      );
-
-      if (custRes.ok) {
-        const custData = await custRes.json();
-        setCustomerDetails(custData);
-
-        // Check if project is closed
-        if (custData && custData.status === "closed") {
-          setProjectClosed(true);
-          if (custData.endDate) {
-            const formatted = new Date(custData.endDate).toLocaleString();
-            setProjectEndDate(formatted);
-            try {
-              localStorage.setItem(
-                `projectClosed:${projectId}`,
-                JSON.stringify(true)
-              );
-              localStorage.setItem(
-                `projectEndDate:${projectId}`,
-                JSON.stringify(formatted)
-              );
-            } catch (e) {
-              console.warn(
-                "Failed to persist project closed state for projectId:",
-                projectId,
-                e
-              );
+    const fetchHistory = async () => {
+      try {
+        // fetch customer details
+        setInitialLoading(true);
+        const custRes = await fetch(
+          `${API_BASE}/customers/${encodeURIComponent(projectId)}`
+        );
+        if (custRes.ok) {
+          const custData = await custRes.json();
+          setCustomerDetails(custData);
+          // If backend says project is closed, reflect it locally and persist
+          try {
+            if (custData && custData.status === "closed") {
+              setProjectClosed(true);
+              if (custData.endDate) {
+                const formatted = new Date(custData.endDate).toLocaleString();
+                setProjectEndDate(formatted);
+                // persist for this projectId
+                try {
+                  localStorage.setItem(
+                    `projectClosed:${projectId}`,
+                    JSON.stringify(true)
+                  );
+                  localStorage.setItem(
+                    `projectEndDate:${projectId}`,
+                    JSON.stringify(formatted)
+                  );
+                } catch (e) {
+                  console.warn(
+                    "Failed to persist project closed state for projectId:",
+                    projectId,
+                    e
+                  );
+                }
+              }
             }
+          } catch (e) {
+            console.warn("Error applying backend closed state:", e);
           }
-        }
-      } else {
-        console.warn(
-          `Customer ${projectId} not found (status ${custRes.status})`
-        );
-      }
-    } catch (err) {
-      console.error("Error fetching customer details:", err);
-    }
-
-    // ---------------- FETCH QUOTATIONS ----------------
-    try {
-      const qRes = await fetch(
-        `${API_BASE}/quotations/${encodeURIComponent(projectId)}`
-      );
-      if (qRes.ok) {
-        const qData = await qRes.json();
-        setQuotations(Array.isArray(qData) ? qData : []);
-      } else {
-        console.warn(
-          `Quotations for ${projectId} not found (status ${qRes.status})`
-        );
-      }
-    } catch (err) {
-      console.error("Error fetching quotations:", err);
-    }
-
-    // ---------------- FETCH COMMENTS ----------------
-    try {
-      setLoadingComments(true);
-      const key = projectId || (customerDetails && customerDetails.projectId);
-      if (key) {
-        const res = await fetch(
-          `${API_BASE}/comments/${encodeURIComponent(key)}`
-        );
-        if (res.ok) {
-          const data = await res.json();
-          setComments(Array.isArray(data) ? data : []);
         } else {
+          // not fatal — keep existing local customerDetails if any
           console.warn(
-            "Failed to fetch comments for project",
-            key,
-            res.status
+            `Customer ${projectId} not found (status ${custRes.status})`
           );
         }
-      } else {
-        console.warn("No valid project key for comments fetch");
+      } catch (err) {
+        console.error("Error fetching customer details:", err);
       }
-    } catch (err) {
-      console.warn("Failed to fetch comments:", err);
-    } finally {
-      setLoadingComments(false);
-      setInitialLoading(false);
-    }
 
-    // lock editing when opened from backend
-    setCustomerEditAllowed(false);
-    setCustomerEditable(false);
-  };
+      try {
+        // fetch quotations list for project
+        const qRes = await fetch(
+          `${API_BASE}/quotations/${encodeURIComponent(projectId)}`
+        );
+        if (qRes.ok) {
+          const qData = await qRes.json();
+          setQuotations(Array.isArray(qData) ? qData : []);
+        } else {
+          console.warn(
+            `Quotations for ${projectId} not found (status ${qRes.status})`
+          );
+        }
+      } catch (err) {
+        console.error("Error fetching quotations:", err);
+      }
 
-  fetchHistory();
-  // 👇 added dependencies so new project detection re-evaluates properly
-}, [projectId, customerDetails, quotations]);
+      // Fetch comments for this project
 
+      // Fetch comments for this project
+      try {
+        setLoadingComments(true);
+
+        // ✅ Use key that works for new or existing project
+        const key = projectId || (customerDetails && customerDetails.projectId);
+        if (key) {
+          try {
+            const res = await fetch(
+              `${API_BASE}/comments/${encodeURIComponent(key)}`
+            );
+
+            if (res.ok) {
+              const data = await res.json();
+              setComments(Array.isArray(data) ? data : []);
+            } else {
+              console.warn(
+                "Failed to fetch comments for project",
+                key,
+                res.status
+              );
+            }
+          } catch (err) {
+            console.error("Failed to fetch comments for project", key, err);
+          }
+        } else {
+          console.warn("No valid project key for comments fetch");
+        }
+      } catch (err) {
+        console.warn("Failed to fetch comments:", err);
+      } finally {
+        setLoadingComments(false);
+        setInitialLoading(false); 
+      }
+
+      // lock editing when opened from backend
+      setCustomerEditAllowed(false);
+      setCustomerEditable(false);
+    };
+
+    fetchHistory();
+  }, [projectId]);
 
   useEffect(() => {
     const key = projectId || (customerDetails && customerDetails.projectId);
@@ -1778,9 +1780,6 @@ setLoadingQuotation(true);
 }
 
 export default QuotationPage;
-
-
-
 
 
 
