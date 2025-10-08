@@ -104,7 +104,13 @@ function QuotationPage() {
   // NEW: if opened with projectId (from AllProjectsPage), fetch customer & quotations from backend
 // === Fetch project data when opened from AllProjectsPage ===
 useEffect(() => {
-  if (!projectId) return;
+  // ✅ Skip fetching when creating a new project
+  // Continue to quotation (new) usually has "testtest-" or similar temp projectId
+  // Or when there's no saved customerDetails yet
+  if (!projectId || !customerDetails || customerDetails.isNewProject) {
+    console.log("Skipping fetchHistory — new project creation detected.");
+    return;
+  }
 
   let cancelled = false; // ✅ to avoid loops when state updates mid-fetch
   const fetchHistory = async () => {
@@ -1804,6 +1810,7 @@ setLoadingQuotation(true);
 }
 
 export default QuotationPage;
+
 
 
 
