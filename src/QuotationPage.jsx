@@ -39,6 +39,11 @@ function QuotationPage() {
   const [newComment, setNewComment] = useState("");
   const [comments, setComments] = useState([]); // comments list for this project
   const [loadingComments, setLoadingComments] = useState(false);
+  //spinner
+    const [loadingQuotation, setLoadingQuotation] = useState(false);
+  const [loadingPayment, setLoadingPayment] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
+
   // UI helpers
 
   const [suggestionOpen, setSuggestionOpen] = useState(false);
@@ -103,6 +108,7 @@ function QuotationPage() {
     const fetchHistory = async () => {
       try {
         // fetch customer details
+        setInitialLoading(true);
         const custRes = await fetch(
           `${API_BASE}/customers/${encodeURIComponent(projectId)}`
         );
@@ -199,6 +205,7 @@ function QuotationPage() {
         console.warn("Failed to fetch comments:", err);
       } finally {
         setLoadingComments(false);
+        setInitialLoading(false); 
       }
 
       // lock editing when opened from backend
@@ -1726,5 +1733,6 @@ function QuotationPage() {
 }
 
 export default QuotationPage;
+
 
 
