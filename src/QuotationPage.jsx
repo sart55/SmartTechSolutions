@@ -102,9 +102,11 @@ function QuotationPage() {
   }, [projectId]);
 
   // NEW: if opened with projectId (from AllProjectsPage), fetch customer & quotations from backend
+// === Fetch project data when opened from AllProjectsPage ===
 useEffect(() => {
   if (!projectId) return;
 
+  let cancelled = false; // ✅ to avoid loops when state updates mid-fetch
   const fetchHistory = async () => {
     console.log("Fetching project data for:", projectId);
     setInitialLoading(true);
@@ -118,9 +120,15 @@ useEffect(() => {
         `${API_BASE}/customers/${encodeURIComponent(projectId)}`
       );
 
+      if (cancelled) return;
+
       if (custRes.ok) {
         const custData = await custRes.json();
-        setCustomerDetails(custData);
+        setCustomerDetails((prev) => {
+          // ✅ only set if data actually changed
+          if (JSON.stringify(prev) !== JSON.stringify(custData)) return custData;
+          return prev;
+        });
         customerFound = true;
 
         // 🔸 Handle closed project state
@@ -130,7 +138,6 @@ useEffect(() => {
           if (custData.endDate) {
             const formatted = new Date(custData.endDate).toLocaleString();
             setProjectEndDate(formatted);
-
             try {
               localStorage.setItem(
                 `projectClosed:${projectId}`,
@@ -141,7 +148,7 @@ useEffect(() => {
                 JSON.stringify(formatted)
               );
             } catch (e) {
-              console.warn("Failed to persist project closed state:", e);
+              console.warn("Persist project closed state failed:", e);
             }
           }
         }
@@ -158,9 +165,16 @@ useEffect(() => {
         `${API_BASE}/quotations/${encodeURIComponent(projectId)}`
       );
 
+      if (cancelled) return;
+
       if (qRes.ok) {
         const qData = await qRes.json();
-        setQuotations(Array.isArray(qData) ? qData : []);
+        setQuotations((prev) => {
+          // ✅ prevent loop: only set if data actually changed
+          if (JSON.stringify(prev) !== JSON.stringify(qData))
+            return Array.isArray(qData) ? qData : [];
+          return prev;
+        });
         quotationFound = true;
       } else {
         console.warn(`Quotations for ${projectId} not found.`);
@@ -171,42 +185,54 @@ useEffect(() => {
 
     // ✅ Stop loader immediately if new project (no backend data)
     if (!customerFound && !quotationFound) {
-      console.log("No data found — new project detected, stopping loader.");
-      setInitialLoading(false);
-      setLoadingComments(false);
-      setCustomerEditAllowed(true);
-      setCustomerEditable(true);
+      if (!cancelled) {
+        console.log("New project — no backend data found, stopping loader.");
+        setCustomerEditAllowed(true);
+        setCustomerEditable(true);
+        setInitialLoading(false);
+        setLoadingComments(false);
+      }
       return;
     }
-// 👇 prevent state resets later from running after early return
-return Promise.resolve();
 
-    // 🔹 Fetch comments (only if data exists)
+    // 🔹 Fetch comments only once (avoid chaining loops)
     try {
       setLoadingComments(true);
-      const key = projectId;
-      const res = await fetch(`${API_BASE}/comments/${encodeURIComponent(key)}`);
+      const res = await fetch(
+        `${API_BASE}/comments/${encodeURIComponent(projectId)}`
+      );
 
-      if (res.ok) {
+      if (!cancelled && res.ok) {
         const data = await res.json();
-        setComments(Array.isArray(data) ? data : []);
-      } else {
-        console.warn("No comments found for project", key);
+        setComments((prev) => {
+          if (JSON.stringify(prev) !== JSON.stringify(data))
+            return Array.isArray(data) ? data : [];
+          return prev;
+        });
       }
     } catch (err) {
       console.error("Error fetching comments:", err);
     } finally {
-      setLoadingComments(false);
-      setInitialLoading(false);
+      if (!cancelled) {
+        setLoadingComments(false);
+        setInitialLoading(false);
+      }
     }
 
-    // 🔹 Lock editing only for existing backend projects
-    setCustomerEditAllowed(false);
-    setCustomerEditable(false);
+    if (!cancelled) {
+      // 🔹 Lock editing for existing backend projects
+      setCustomerEditAllowed(false);
+      setCustomerEditable(false);
+    }
   };
 
   fetchHistory();
-}, [projectId]); // ✅ Only depends on projectId
+
+  // ✅ Cleanup flag — stops infinite loops when navigating or updating state
+  return () => {
+    cancelled = true;
+  };
+}, [projectId]); // ✅ only re-run if projectId changes
 
 
   useEffect(() => {
@@ -1778,6 +1804,7 @@ setLoadingQuotation(true);
 }
 
 export default QuotationPage;
+
 
 
 
