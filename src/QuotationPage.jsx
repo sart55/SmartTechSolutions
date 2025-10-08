@@ -1348,13 +1348,14 @@ setLoadingQuotation(true);
                     <option value="cash">Cash</option>
                     <option value="online">Online</option>
                   </select>
-                  <button
+                 <button
   className="btn btn-primary"
   onClick={handleSavePayment}
-  style={{ background: "#1976d2", minWidth: "140px" }}
+  style={{ background: "#1976d2", minWidth: "140px", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px" }}
   disabled={loadingPayment}
 >
-  {loadingPayment ? <div className="loader"></div> : "Save Payment"}
+  Save Payment
+  {loadingPayment && <span className="loader-inline"></span>}
 </button>
 
                    
@@ -1588,12 +1589,14 @@ setLoadingQuotation(true);
               <div style={{ marginTop: 12, display: "flex", gap: 10 }}>
                 <button
   className="btns btn btn-primary"
-  style={{ width: "30%", background: "#1976d2", padding: "2px" }}
+  style={{ width: "30%", background: "#1976d2", padding: "2px", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px" }}
   onClick={saveQuotation}
   disabled={loadingQuotation}
 >
-  {loadingQuotation ? <div className="loader"></div> : "Save Quotation"}
+  Save Quotation
+  {loadingQuotation && <span className="loader-inline"></span>}
 </button>
+
 
                   
                 <button className="btns btn btn-primary" onClick={closeProject} style={{backgroundColor:"rgb(229, 57, 53)",width:"30%"}}>
@@ -1646,25 +1649,43 @@ setLoadingQuotation(true);
 
                       Replace src with your arrow image path if available */}
 
-                 {loadingComments ? (
-  <div className="loader" style={{ width: 36, height: 36 }}></div>
-) : (
+<div
+  style={{
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    position: "relative",
+    width: 40,
+    height: 40,
+  }}
+>
   <img
     src={sendIcon}
     alt="Save comment"
     title="Save comment"
-    onClick={handleSaveComment}
-    onKeyDown={(e) => {
-      if (e.key === "Enter") handleSaveComment();
-    }}
+    onClick={!loadingComments ? handleSaveComment : undefined}
     style={{
       width: 36,
       height: 36,
-      cursor: "pointer",
+      cursor: loadingComments ? "not-allowed" : "pointer",
+      opacity: loadingComments ? 0.5 : 1,
       objectFit: "contain",
+      transition: "opacity 0.3s",
     }}
   />
-)}
+  {loadingComments && (
+    <span
+      className="loader-inline"
+      style={{
+        position: "absolute",
+        right: -24,
+        top: "50%",
+        transform: "translateY(-50%)",
+      }}
+    ></span>
+  )}
+</div>
+
 
                 </div>
 
@@ -1759,6 +1780,7 @@ setLoadingQuotation(true);
 }
 
 export default QuotationPage;
+
 
 
 
