@@ -104,7 +104,13 @@ function QuotationPage() {
   // NEW: if opened with projectId (from AllProjectsPage), fetch customer & quotations from backend
   useEffect(() => {
     if (!projectId) return;
+  const isNewProject =
+    !customerDetails && (!quotations || quotations.length === 0);
 
+  if (isNewProject) {
+    setInitialLoading(false);
+    return; // nothing to fetch yet
+  }
     const fetchHistory = async () => {
       try {
         // fetch customer details
@@ -1780,6 +1786,7 @@ setLoadingQuotation(true);
 }
 
 export default QuotationPage;
+
 
 
 
