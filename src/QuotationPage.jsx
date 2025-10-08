@@ -1646,21 +1646,26 @@ setLoadingQuotation(true);
 
                       Replace src with your arrow image path if available */}
 
-                  <img
-                    src={sendIcon}
-                    alt="Save comment"
-                    title="Save comment"
-                    onClick={handleSaveComment}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") handleSaveComment();
-                    }}
-                    style={{
-                      width: 36,
-                      height: 36,
-                      cursor: "pointer",
-                      objectFit: "contain",
-                    }}
-                  />
+                 {loadingComments ? (
+  <div className="loader" style={{ width: 36, height: 36 }}></div>
+) : (
+  <img
+    src={sendIcon}
+    alt="Save comment"
+    title="Save comment"
+    onClick={handleSaveComment}
+    onKeyDown={(e) => {
+      if (e.key === "Enter") handleSaveComment();
+    }}
+    style={{
+      width: 36,
+      height: 36,
+      cursor: "pointer",
+      objectFit: "contain",
+    }}
+  />
+)}
+
                 </div>
 
                 <div style={{ marginTop: 12 }}>
@@ -1754,6 +1759,7 @@ setLoadingQuotation(true);
 }
 
 export default QuotationPage;
+
 
 
 
