@@ -178,6 +178,8 @@ useEffect(() => {
       setCustomerEditable(true);
       return;
     }
+// 👇 prevent state resets later from running after early return
+return Promise.resolve();
 
     // 🔹 Fetch comments (only if data exists)
     try {
@@ -208,28 +210,33 @@ useEffect(() => {
 
 
   useEffect(() => {
-    const key = projectId || (customerDetails && customerDetails.projectId);
-    if (!key) return;
-    if (quotations.length > 0) {
-      const fetchComments = async () => {
-        try {
-          setLoadingComments(true);
-          const res = await fetch(
-            `${API_BASE}/comments/${encodeURIComponent(key)}`
-          );
-          if (res.ok) {
-            const data = await res.json();
-            setComments(Array.isArray(data) ? data : []);
-          }
-        } catch (err) {
-          console.error("Failed to refetch comments:", err);
-        } finally {
-          setLoadingComments(false);
-        }
-      };
-      fetchComments();
+  // 🚫 Don't run if initial loading still in progress
+  if (initialLoading) return;
+
+  // 🚫 Don't run if new project (no quotations, no customer)
+  if (!projectId && (!customerDetails || !customerDetails.projectId)) return;
+
+  const key = projectId || (customerDetails && customerDetails.projectId);
+  if (!key || quotations.length === 0) return;
+
+  const fetchComments = async () => {
+    try {
+      setLoadingComments(true);
+      const res = await fetch(`${API_BASE}/comments/${encodeURIComponent(key)}`);
+      if (res.ok) {
+        const data = await res.json();
+        setComments(Array.isArray(data) ? data : []);
+      }
+    } catch (err) {
+      console.error("Failed to refetch comments:", err);
+    } finally {
+      setLoadingComments(false);
     }
-  }, [quotations]); // ✅ run whenever quotations change
+  };
+
+  fetchComments();
+}, [quotations, initialLoading, projectId, customerDetails]);
+
 
   // persist quotations locally (only for projects not loaded from backend)
   useEffect(() => {
@@ -1771,6 +1778,7 @@ setLoadingQuotation(true);
 }
 
 export default QuotationPage;
+
 
 
 
