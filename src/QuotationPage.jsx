@@ -1101,6 +1101,7 @@ function QuotationPage() {
 
   return (
     <Layout>
+      
       <div>
         {/* Customer Details Section */}
         <div
@@ -1733,6 +1734,7 @@ function QuotationPage() {
 }
 
 export default QuotationPage;
+
 
 
 
