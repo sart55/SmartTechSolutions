@@ -1357,8 +1357,7 @@ setLoadingQuotation(true);
   {loadingPayment ? <div className="loader"></div> : "Save Payment"}
 </button>
 
-                    Save Payment
-                  </button>
+                   
                 </div>
               )}
             </div>
@@ -1596,8 +1595,7 @@ setLoadingQuotation(true);
   {loadingQuotation ? <div className="loader"></div> : "Save Quotation"}
 </button>
 
-                  Save Quotation
-                </button>
+                  
                 <button className="btns btn btn-primary" onClick={closeProject} style={{backgroundColor:"rgb(229, 57, 53)",width:"30%"}}>
                   Close Project
                 </button>
@@ -1756,6 +1754,7 @@ setLoadingQuotation(true);
 }
 
 export default QuotationPage;
+
 
 
 
