@@ -1122,9 +1122,9 @@ setLoadingQuotation(true);
     <div className="loading-text">
       Loading details
       <span className="dots">
-        <span className="dot one">.</span>
-        <span className="dot two">.</span>
-        <span className="dot three">.</span>
+        <span className="dot one"></span>
+        <span className="dot two"></span>
+        <span className="dot three"></span>
       </span>
     </div>
   </div>
@@ -1794,6 +1794,7 @@ setLoadingQuotation(true);
 }
 
 export default QuotationPage;
+
 
 
 
