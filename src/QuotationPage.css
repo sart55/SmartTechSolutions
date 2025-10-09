@@ -314,9 +314,18 @@ html, body, #root {
   align-items: center;
   justify-content: center;
 }
+
+/* Keep dots fixed width to prevent jumping */
+.dots {
+  display: inline-flex;
+  width: 1.5em; /* reserve space for 3 dots */
+  justify-content: flex-start;
+}
+
 .dot {
   opacity: 0;
   animation: dotFade 1.5s infinite;
+  font-size: 1.1rem;
 }
 
 .dot.one { animation-delay: 0s; }
@@ -328,14 +337,7 @@ html, body, #root {
   40% { opacity: 1; }
 }
 
-
-
-/* Spinner rotation */
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
-
-
-
-
