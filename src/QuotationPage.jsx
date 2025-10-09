@@ -1,4 +1,5 @@
 // QuotationPage.jsx
+import { useParams, useLocation } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import jsPDF from "jspdf";
@@ -10,6 +11,8 @@ import sendIcon from "./assets/send.jpg"; // <-- adjust relative to this file
 
 function QuotationPage() {
   const { projectId } = useParams();
+const location = useLocation();
+const isNewProject = location.state?.isNewProject || false;
 
   const [allComponents, setAllComponents] = useState([]); // fetched from backend
   const [selected, setSelected] = useState([]);
@@ -103,7 +106,14 @@ function QuotationPage() {
 
   // NEW: if opened with projectId (from AllProjectsPage), fetch customer & quotations from backend
   useEffect(() => {
-    if (!projectId) return;
+    useEffect(() => {
+  // 🚫 Skip backend fetch if this page is opened right after "Continue to Quotation"
+  if (!projectId || is) {
+    console.log("Skipping fetchHistory — new project creation detected.");
+    setInitialLoading(false); // stop loader right away
+    return;
+  }
+
 
     const fetchHistory = async () => {
       try {
@@ -1780,6 +1790,7 @@ setLoadingQuotation(true);
 }
 
 export default QuotationPage;
+
 
 
 
