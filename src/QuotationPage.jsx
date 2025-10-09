@@ -1,7 +1,6 @@
 // QuotationPage.jsx
-import { useParams, useLocation } from "react-router-dom";
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import jsPDF from "jspdf";
 import autoTable, { Row } from "jspdf-autotable";
 import Layout from "./Layout";
@@ -1786,6 +1785,7 @@ setLoadingQuotation(true);
 }
 
 export default QuotationPage;
+
 
 
 
