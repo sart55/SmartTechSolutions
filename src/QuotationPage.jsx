@@ -1116,17 +1116,19 @@ setLoadingQuotation(true);
 
   return (
     <Layout>
-<div className="loading-overlay">
-  <div className="loader"></div>
-  <div className="loading-text-container">
-    <div className="loading-text">Loading details</div>
-    <div className="dots">
-      <span className="dot one"></span>
-      <span className="dot two"></span>
-      <span className="dot three"></span>
+{initialLoading && (
+  <div className="loading-overlay">
+    <div className="loader"></div>
+    <div className="loading-row">
+      <span className="loading-text">Loading details</span>
+      <span className="dots">
+        <span className="dot one"></span>
+        <span className="dot two"></span>
+        <span className="dot three"></span>
+      </span>
     </div>
   </div>
-</div>
+)}
 
 
       <div>
@@ -1599,16 +1601,15 @@ setLoadingQuotation(true);
               </div>
 
               <div style={{ marginTop: 12, display: "flex", gap: 10 }}>
-               <button
-  className="btn btn-primary"
+                <button
+  className="btns btn btn-primary"
+  style={{ width: "30%", background: "#1976d2", padding: "2px", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px" }}
   onClick={saveQuotation}
   disabled={loadingQuotation}
-  style={{ background: "#1976d2", minWidth: "160px", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px" }}
 >
   Save Quotation
   {loadingQuotation && <span className="loader-inline"></span>}
 </button>
-
 
 
                   
@@ -1661,35 +1662,43 @@ setLoadingQuotation(true);
                   {/* Using a simple button fallback in case image path not available.
 
                       Replace src with your arrow image path if available */}
+
 <div
   style={{
-    width: 40,
-    height: 40,
-    position: "relative",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
+    position: "relative",
+    width: 40,
+    height: 40,
   }}
 >
-  {!loadingComments ? (
-    <img
-      src={sendIcon}
-      alt="Save comment"
-      title="Save comment"
-      onClick={handleSaveComment}
+  <img
+    src={sendIcon}
+    alt="Save comment"
+    title="Save comment"
+    onClick={!loadingComments ? handleSaveComment : undefined}
+    style={{
+      width: 36,
+      height: 36,
+      cursor: loadingComments ? "not-allowed" : "pointer",
+      opacity: loadingComments ? 0.5 : 1,
+      objectFit: "contain",
+      transition: "opacity 0.3s",
+    }}
+  />
+  {loadingComments && (
+    <span
+      className="loader-inline"
       style={{
-        width: 32,
-        height: 32,
-        cursor: "pointer",
-        objectFit: "contain",
-        transition: "opacity 0.3s ease",
+        position: "absolute",
+        right: -24,
+        top: "50%",
+        transform: "translateY(-50%)",
       }}
-    />
-  ) : (
-    <span className="loader-inline"></span>
+    ></span>
   )}
 </div>
-
 
 
                 </div>
@@ -1785,8 +1794,6 @@ setLoadingQuotation(true);
 }
 
 export default QuotationPage;
-
-
 
 
 
