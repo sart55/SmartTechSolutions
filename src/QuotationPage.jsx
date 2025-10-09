@@ -1131,7 +1131,6 @@ setLoadingQuotation(true);
 )}
 
 
-
       <div>
         {/* Customer Details Section */}
         <div
@@ -1795,6 +1794,7 @@ setLoadingQuotation(true);
 }
 
 export default QuotationPage;
+
 
 
 
