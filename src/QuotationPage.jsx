@@ -1116,7 +1116,7 @@ setLoadingQuotation(true);
 
   return (
     <Layout>
-    {initialLoading && (
+   {initialLoading && (
   <div className="loading-overlay">
     <div className="loader"></div>
     <div className="loading-text">
@@ -1127,6 +1127,7 @@ setLoadingQuotation(true);
     </div>
   </div>
 )}
+
 
 
       <div>
@@ -1792,6 +1793,7 @@ setLoadingQuotation(true);
 }
 
 export default QuotationPage;
+
 
 
 
