@@ -61,7 +61,13 @@ function CustomerDetailsPage() {
       setWarning("Could not verify uniqueness (server unreachable). Proceeding.");
     }
     localStorage.setItem("customerDetails", JSON.stringify(form));
-    navigate("/quotation/new");
+
+// ✅ Create a real projectId from form data
+const projectId = makeProjectId(form.projectName, form.customerContact);
+
+// ✅ Navigate with projectId AND mark as new project
+navigate(`/quotation/${projectId}`, { state: { isNewProject: true } });
+
   };
 
   return (
@@ -70,7 +76,7 @@ function CustomerDetailsPage() {
         <div className="form-card">
           <div className="card-header">
             <h2>Enter Customer Details</h2>
-            <p className="muted">Fill the form below to continue to quotation.</p>
+            <p className="muted">Fill the form below to  to quotation.</p>
           </div>
           {warning && <div className="warning">{warning}</div>}
           <form onSubmit={handleSubmit} className="customer-form">
@@ -180,6 +186,7 @@ export default CustomerDetailsPage;
 
 
 // End of file - padded to keep original length
+
 
 
 
