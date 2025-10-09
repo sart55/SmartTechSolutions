@@ -306,23 +306,19 @@ html, body, #root {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.2em;
+  gap: 0.3em;
 }
 
-/* Static text */
+/* Text */
 .loading-text {
   color: #fff;
   font-size: 1.1rem;
   font-weight: 600;
   letter-spacing: 0.5px;
   line-height: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.3em;
 }
 
-/* Move dots outside text styles */
+/* Dots */
 .dots {
   display: flex;
   align-items: center;
@@ -331,7 +327,7 @@ html, body, #root {
 }
 
 .dot {
-  width: 6px;              /* fixed pixel size for consistency */
+  width: 6px;
   height: 6px;
   margin: 0 2px;
   border-radius: 50%;
@@ -339,7 +335,6 @@ html, body, #root {
   opacity: 0.2;
   animation: dotFade 1.5s infinite;
 }
-
 
 .dot.one { animation-delay: 0s; }
 .dot.two { animation-delay: 0.3s; }
@@ -353,4 +348,3 @@ html, body, #root {
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
-
