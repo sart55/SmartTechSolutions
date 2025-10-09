@@ -62,8 +62,7 @@ function CustomerDetailsPage() {
     }
     localStorage.setItem("customerDetails", JSON.stringify(form));
 
-// ✅ Create a real projectId from form data
-const projectId = makeProjectId(form.projectName, form.customerContact);
+
 
 // ✅ Navigate with projectId AND mark as new project
 navigate(`/quotation/${projectId}`, { state: { isNewProject: true } });
@@ -186,6 +185,7 @@ export default CustomerDetailsPage;
 
 
 // End of file - padded to keep original length
+
 
 
 
