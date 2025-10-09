@@ -301,30 +301,29 @@ html, body, #root {
   margin-bottom: 16px;
 }
 
-/* Text container */
+/* Text + dots row */
 .loading-row {
   display: flex;
-  align-items: center;       /* keeps vertical alignment stable */
+  align-items: center;
   justify-content: center;
   gap: 0.2em;
 }
 
-/* Text itself — static */
+/* Static text */
 .loading-text {
   color: #fff;
   font-size: 1.1rem;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0.5px;
   line-height: 1;
-  margin: 0;
 }
 
-/* Dots now separate flex children — no baseline shifts */
+/* Dots — only fade, no scale */
 .dots {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 1em;               /* fixed height */
+  height: 1em;
 }
 
 .dot {
@@ -333,17 +332,17 @@ html, body, #root {
   margin: 0 0.1em;
   border-radius: 50%;
   background: #fff;
-  opacity: 0.3;
-  animation: dotPulse 1.4s infinite;
+  opacity: 0;
+  animation: dotFade 1.5s infinite;
 }
 
 .dot.one { animation-delay: 0s; }
-.dot.two { animation-delay: 0.2s; }
-.dot.three { animation-delay: 0.4s; }
+.dot.two { animation-delay: 0.3s; }
+.dot.three { animation-delay: 0.6s; }
 
-@keyframes dotPulse {
-  0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); }
-  40% { opacity: 1; transform: scale(1.2); }
+@keyframes dotFade {
+  0%, 80%, 100% { opacity: 0.2; }
+  40% { opacity: 1; }
 }
 
 @keyframes spin {
