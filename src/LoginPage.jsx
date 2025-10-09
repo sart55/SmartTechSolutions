@@ -67,7 +67,7 @@ function LoginPage() {
       {loading ? (
         <div className="loading-screen">
           <div className="loader"></div>
-          <p className="loading-text">थांब लवड्या जरा...</p>
+          <p className="loading-text">Logging...</p>
         </div>
       ) : (
         <div className="login-card">
@@ -104,4 +104,5 @@ function LoginPage() {
 }
 
 export default LoginPage;
+
 
