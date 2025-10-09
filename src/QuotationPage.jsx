@@ -1116,12 +1116,18 @@ setLoadingQuotation(true);
 
   return (
     <Layout>
-     {initialLoading && (
+    {initialLoading && (
   <div className="loading-overlay">
     <div className="loader"></div>
-    <div className="loading-text">Loading details...</div>
+    <div className="loading-text">
+      Loading details
+      <span className="dot one">.</span>
+      <span className="dot two">.</span>
+      <span className="dot three">.</span>
+    </div>
   </div>
 )}
+
 
       <div>
         {/* Customer Details Section */}
@@ -1786,6 +1792,7 @@ setLoadingQuotation(true);
 }
 
 export default QuotationPage;
+
 
 
 
