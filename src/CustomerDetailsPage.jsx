@@ -61,11 +61,8 @@ function CustomerDetailsPage() {
       setWarning("Could not verify uniqueness (server unreachable). Proceeding.");
     }
     localStorage.setItem("customerDetails", JSON.stringify(form));
+navigate("/quotation/new");
 
-
-
-// ✅ Navigate with projectId AND mark as new project
-navigate(`/quotation/${projectId}`, { state: { isNewProject: true } });
 
   };
 
@@ -185,6 +182,7 @@ export default CustomerDetailsPage;
 
 
 // End of file - padded to keep original length
+
 
 
 
