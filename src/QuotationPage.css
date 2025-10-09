@@ -328,14 +328,7 @@ html, body, #root {
   40% { opacity: 1; }
 }
 
-.loading-text::after {
-  content: "";
-  display: inline-block;
-  margin-left: 4px;
-  width: 1em;
-  text-align: left;
-  animation: dots-fade 1.5s infinite;
-}
+
 
 /* Spinner rotation */
 @keyframes spin {
@@ -343,13 +336,6 @@ html, body, #root {
   100% { transform: rotate(360deg); }
 }
 
-/* Smooth dot fading animation */
-@keyframes dots-fade {
-  0%   { content: ""; opacity: 0; }
-  20%  { content: "."; opacity: 1; }
-  40%  { content: ".."; opacity: 1; }
-  60%  { content: "..."; opacity: 1; }
-  80%  { content: "..."; opacity: 0.5; }
-  100% { content: ""; opacity: 0; }
-}
+
+
 
