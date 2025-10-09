@@ -306,44 +306,38 @@ html, body, #root {
 
 /* Loading text */
 .loading-text {
+  position: relative;
   color: #ffffff;
   font-size: 1.1rem;
   font-weight: 500;
   letter-spacing: 0.5px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  line-height: 1; /* prevent vertical jiggle */
+  display: inline-block;
+  line-height: 1.4;
+  padding-right: 1.5em; /* space for dots */
 }
 
-/* Dot container — fixed width */
+/* Absolutely positioned dots so they don't shift text */
 .dots {
+  position: absolute;
+  right: 0;
+  top: 0;
   display: inline-flex;
-  width: 1.5em; /* fixed space for 3 dots */
-  justify-content: space-between;
-  align-items: baseline; /* keep baseline aligned */
+  height: 100%;
+  align-items: center;
 }
 
-/* Dots animation using scale instead of opacity for smoothness */
 .dot {
-  opacity: 0.6;
-  transform: scale(0.5);
-  animation: dotWave 1.4s infinite;
+  opacity: 0;
+  animation: dotFade 1.5s infinite;
 }
 
 .dot.one { animation-delay: 0s; }
-.dot.two { animation-delay: 0.2s; }
-.dot.three { animation-delay: 0.4s; }
+.dot.two { animation-delay: 0.3s; }
+.dot.three { animation-delay: 0.6s; }
 
-@keyframes dotWave {
-  0%, 80%, 100% {
-    opacity: 0.4;
-    transform: scale(0.5);
-  }
-  40% {
-    opacity: 1;
-    transform: scale(1);
-  }
+@keyframes dotFade {
+  0%, 80%, 100% { opacity: 0; }
+  40% { opacity: 1; }
 }
 
 @keyframes spin {
