@@ -1119,16 +1119,15 @@ setLoadingQuotation(true);
 {initialLoading && (
   <div className="loading-overlay">
     <div className="loader"></div>
-    <div className="loading-row">
-      <span className="loading-text">Loading details</span>
-      <span className="dots">
-        <span className="dot one"></span>
-        <span className="dot two"></span>
-        <span className="dot three"></span>
-      </span>
+    <div className="loading-text">
+      Loading details
+      <span className="dot one">.</span>
+      <span className="dot two">.</span>
+      <span className="dot three">.</span>
     </div>
   </div>
 )}
+
 
 
       <div>
