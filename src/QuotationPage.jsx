@@ -1116,11 +1116,13 @@ setLoadingQuotation(true);
 
   return (
     <Layout>
-  {initialLoading && (
+ {initialLoading && (
   <div className="loading-overlay">
     <div className="loader"></div>
-    <div className="loading-text">
-      Loading details
+
+    {/* Text + dots separated in their own flex row */}
+    <div className="loading-row">
+      <span className="loading-text">Loading details</span>
       <span className="dots">
         <span className="dot one"></span>
         <span className="dot two"></span>
@@ -1129,6 +1131,7 @@ setLoadingQuotation(true);
     </div>
   </div>
 )}
+
 
 
       <div>
@@ -1794,6 +1797,7 @@ setLoadingQuotation(true);
 }
 
 export default QuotationPage;
+
 
 
 
