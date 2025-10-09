@@ -149,10 +149,12 @@ html, body {
 .loading-text {
   font-size: 18px;
   letter-spacing: 1px;
-  animation: fadeIn 1s ease-in-out infinite alternate;
+  opacity: 1; /* always visible */
 }
+
 
 @keyframes fadeIn {
   from { opacity: 0.6; }
   to { opacity: 1; }
 }
+
