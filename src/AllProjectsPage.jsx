@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Layout from "./Layout";
 import "./Layout.css";
-import "./LoginPage.css"; // ✅ Reuse spinner + dots styles
+import "./QuotationPage.css"; // ✅ use same loading overlay & animation styles
 
 function AllProjectsPage() {
   const navigate = useNavigate();
@@ -11,7 +11,7 @@ function AllProjectsPage() {
   const [pageOpen, setPageOpen] = useState(1);
   const [pageClosed, setPageClosed] = useState(1);
   const [search, setSearch] = useState("");
-  const [loading, setLoading] = useState(true); // ✅ show spinner initially
+  const [loading, setLoading] = useState(true);
   const pageSize = 8;
 
   useEffect(() => {
@@ -24,14 +24,12 @@ function AllProjectsPage() {
         });
       })
       .catch((err) => console.error("Error fetching projects:", err))
-      .finally(() => setLoading(false)); // ✅ stop loading
+      .finally(() => setLoading(false));
   }, []);
 
-  // helper: paginate
   const paginate = (arr, page) =>
     arr.slice((page - 1) * pageSize, page * pageSize);
 
-  // helper: search filter
   const filterProjects = (arr) =>
     arr.filter((p) =>
       p.projectName?.toLowerCase().includes(search.toLowerCase())
@@ -46,7 +44,7 @@ function AllProjectsPage() {
   return (
     <Layout>
       <div style={{ padding: "10px", position: "relative" }}>
-        {/* ======= HEADER + COUNTS (Always Visible) ======= */}
+        {/* ===== Header (always visible) ===== */}
         <div
           style={{
             display: "flex",
@@ -102,18 +100,18 @@ function AllProjectsPage() {
           </div>
         </div>
 
-        {/* ======= GRID FOR OPEN/CLOSED PROJECTS ======= */}
+        {/* ===== Main Grid ===== */}
         <div
           style={{
             display: "grid",
             gridTemplateColumns: "1fr 1fr",
             gap: "40px",
-            opacity: loading ? 0.3 : 1, // ✅ dim while loading
+            opacity: loading ? 0.4 : 1, // slightly dim while loading
             transition: "opacity 0.3s ease",
           }}
           className="projects-wrapper"
         >
-          {/* OPEN PROJECTS */}
+          {/* Open Projects */}
           <div>
             <h3
               style={{
@@ -193,7 +191,7 @@ function AllProjectsPage() {
             )}
           </div>
 
-          {/* CLOSED PROJECTS */}
+          {/* Closed Projects */}
           <div>
             <h3
               style={{
@@ -224,9 +222,7 @@ function AllProjectsPage() {
                       cursor: "pointer",
                       transition: "transform 0.2s, box-shadow 0.2s",
                     }}
-                    onClick={() =>
-                      navigate(`/quotation-history/${proj.id}`)
-                    }
+                    onClick={() => navigate(`/quotation-history/${proj.id}`)}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.transform = "translateY(-3px)";
                       e.currentTarget.style.boxShadow =
@@ -276,23 +272,9 @@ function AllProjectsPage() {
           </div>
         </div>
 
-        {/* ======= OVERLAY LOADER (ON TOP) ======= */}
+        {/* ===== Overlay Loader ===== */}
         {loading && (
-          <div
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              width: "100%",
-              height: "100%",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              background: "rgba(0, 0, 0, 0.6)", // ✅ your preferred overlay
-              zIndex: 1000,
-            }}
-          >
+          <div className="loading-overlay">
             <div className="loader"></div>
             <div className="loading-row">
               <p className="loading-text">Loading Projects</p>
