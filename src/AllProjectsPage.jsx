@@ -54,6 +54,7 @@ function AllProjectsPage() {
             alignItems: "center",
             justifyContent: "center",
             height: "80vh",
+            background: "linear-gradient(135deg, #000000 0%, #6bc7f2 100%)",
             color: "white",
           }}
         >
@@ -303,3 +304,4 @@ function AllProjectsPage() {
 }
 
 export default AllProjectsPage;
+
