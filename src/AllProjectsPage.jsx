@@ -47,37 +47,46 @@ function AllProjectsPage() {
 if (loading) {
   return (
     <Layout>
+      {/* 🔹 Fullscreen dark overlay ABOVE everything */}
       <div
         style={{
           position: "fixed",
           top: 0,
           left: 0,
-          width: "100%",
-          height: "100%",
+          width: "100vw",
+          height: "100vh",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          background: "rgba(0, 0, 0, 0.6)", // ✅ semi-transparent overlay
-          backdropFilter: "blur(2px)",
-          zIndex: 9999,
+          background: "rgba(0, 0, 0, 0.6)", // ✅ your preferred dark overlay
+          zIndex: 99999, // 🔥 ensures it's on top of everything
         }}
       >
         <div className="loader"></div>
         <div className="loading-row">
-          <p className="loading-text" style={{ color: "#203040" }}>
+          <p
+            className="loading-text"
+            style={{
+              color: "white",
+              fontSize: "1.1rem",
+              fontWeight: "600",
+              letterSpacing: "0.5px",
+            }}
+          >
             Loading Projects
           </p>
           <div className="dots">
-            <div className="dot one" style={{ background: "#203040" }}></div>
-            <div className="dot two" style={{ background: "#203040" }}></div>
-            <div className="dot three" style={{ background: "#203040" }}></div>
+            <div className="dot one"></div>
+            <div className="dot two"></div>
+            <div className="dot three"></div>
           </div>
         </div>
       </div>
     </Layout>
   );
 }
+
 
   return (
     <Layout>
@@ -311,6 +320,7 @@ if (loading) {
 }
 
 export default AllProjectsPage;
+
 
 
 
