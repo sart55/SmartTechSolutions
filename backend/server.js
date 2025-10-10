@@ -608,6 +608,36 @@ app.get("/api/quotations/:projectId", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+// DELETE all quotations for a project
+app.delete("/api/quotations/:projectId", async (req, res) => {
+  try {
+    const { projectId } = req.params;
+
+    // Get all quotations for this project
+    const snapshot = await db
+      .collection("quotations")
+      .where("projectId", "==", projectId)
+      .get();
+
+    if (snapshot.empty) {
+      return res.json({ success: true, deleted: 0, message: "No quotations found" });
+    }
+
+    // Delete in batch
+    const batch = db.batch();
+    snapshot.forEach((doc) => batch.delete(doc.ref));
+    await batch.commit();
+
+    // Optionally mark in customer doc
+    const customerRef = db.collection("customers").doc(projectId);
+    await customerRef.update({ quotationsDeleted: true });
+
+    res.json({ success: true, deleted: snapshot.size });
+  } catch (err) {
+    console.error("Error deleting quotations:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
 
 // POST /api/comments
 app.post("/api/comments", async (req, res) => {
@@ -761,6 +791,7 @@ app.post("/api/admins/verify-email-otp", async (req, res) => {
 app.listen(PORT, () =>
   console.log(`Server running on http://localhost:${PORT}`)
 );
+
 
 
 
