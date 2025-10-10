@@ -67,7 +67,15 @@ function LoginPage() {
       {loading ? (
         <div className="loading-screen">
           <div className="loader"></div>
-          <p className="loading-text">Logging...</p>
+          <div className="loading-row">
+  <p className="loading-text">Logging</p>
+  <div className="dots">
+    <div className="dot one"></div>
+    <div className="dot two"></div>
+    <div className="dot three"></div>
+  </div>
+</div>
+
         </div>
       ) : (
         <div className="login-card">
@@ -104,5 +112,6 @@ function LoginPage() {
 }
 
 export default LoginPage;
+
 
 
