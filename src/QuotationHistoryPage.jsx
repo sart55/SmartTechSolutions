@@ -20,6 +20,7 @@ function QuotationHistoryPage() {
   const [payments, setPayments] = useState([]);
 const [loadingPayments, setLoadingPayments] = useState(true);
 const [paymentsDeleted, setPaymentsDeleted] = useState(false);
+const [quotationsDeleted, setQuotationsDeleted] = useState(false);
 
   // ✅ Check if comments/payments were previously deleted (persisted)
   useEffect(() => {
@@ -29,6 +30,10 @@ const [paymentsDeleted, setPaymentsDeleted] = useState(false);
       const pFlag = localStorage.getItem(`paymentsDeleted:${projectId}`);
   setPaymentsDeleted(pFlag ? JSON.parse(pFlag) : false);
   }, [projectId]);
+useEffect(() => {
+  const qFlag = localStorage.getItem(`quotationsDeleted:${projectId}`);
+  setQuotationsDeleted(qFlag ? JSON.parse(qFlag) : false);
+}, [projectId]);
 
   // Fetch customer & quotations history
   useEffect(() => {
@@ -122,6 +127,26 @@ const handleDeletePayments = async () => {
   } catch (err) {
     console.error("Error deleting payments:", err);
     alert("Error deleting payments");
+  }
+};
+const handleDeleteQuotations = async () => {
+  if (!window.confirm("Are you sure you want to delete all quotations for this project?")) return;
+  try {
+    const res = await fetch(`https://smarttechsolutions-4df8.onrender.com/api/quotations/${projectId}`, {
+      method: "DELETE",
+    });
+    const data = await res.json();
+    if (data.success) {
+      setQuotations([]);
+      setQuotationsDeleted(true);
+      localStorage.setItem(`quotationsDeleted:${projectId}`, "true");
+      alert(`Deleted ${data.deleted} quotation(s).`);
+    } else {
+      alert("Failed to delete quotations.");
+    }
+  } catch (err) {
+    console.error("Error deleting quotations:", err);
+    alert("Error deleting quotations.");
   }
 };
 
@@ -336,6 +361,49 @@ const handleDeletePayments = async () => {
             Download Invoice
           </button>
         )}
+{/* Quotations Section */}
+<h3>Quotations</h3>
+{quotationsDeleted ? (
+  <div style={{ color: "#e53935", fontWeight: "bold" }}>Quotations deleted.</div>
+) : quotations.length === 0 ? (
+  <p>No quotations available.</p>
+) : (
+  quotations.map((q, idx) => (
+    <div key={q.id || idx} style={{ border: "1px solid gray", margin: "10px 0", padding: "10px", borderRadius: "6px", background: "#f9f9f9" }}>
+      <p><b>Date:</b> {q.date ? new Date(q.date).toLocaleString() : "N/A"}</p>
+      <ul>
+        {(q.items || []).map((item, i) => (
+          <li key={i}>
+            {item.name} | Qty: {item.quantity} | Rs. {item.price * item.quantity}
+          </li>
+        ))}
+      </ul>
+      <p>Setup Charges: {q.setupCharges || 0}</p>
+      <p>Development Charges: {q.developmentCharges || 0}</p>
+      <b>Grand Total: {q.grandTotal || 0}</b>
+    </div>
+  ))
+)}
+
+{/* Show delete button only if project is closed and not already deleted */}
+{customer.status?.toLowerCase() === "closed" && !quotationsDeleted && quotations.length > 0 && (
+  <button
+    onClick={handleDeleteQuotations}
+    style={{
+      marginTop: 12,
+      backgroundColor: "#e53935",
+      color: "white",
+      border: "none",
+      padding: "10px 16px",
+      borderRadius: "6px",
+      cursor: "pointer",
+      fontWeight: "bold",
+      boxShadow: "0 2px 6px rgba(0,0,0,0.2)",
+    }}
+  >
+    🗑 Delete Quotations
+  </button>
+)}
 
         {/* Comments Section */}
         <div
@@ -449,5 +517,6 @@ const handleDeletePayments = async () => {
 }
 
 export default QuotationHistoryPage;
+
 
 
