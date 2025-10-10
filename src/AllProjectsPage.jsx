@@ -58,7 +58,7 @@ if (loading) {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          background: "rgba(255, 255, 255, 0.7)", // ✅ semi-transparent overlay
+          background: "rgba(0, 0, 0, 0.6)", // ✅ semi-transparent overlay
           backdropFilter: "blur(2px)",
           zIndex: 9999,
         }}
@@ -311,5 +311,6 @@ if (loading) {
 }
 
 export default AllProjectsPage;
+
 
 
