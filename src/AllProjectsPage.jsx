@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Layout from "./Layout";
 import "./Layout.css";
-import "./LoginPage.css"; // ✅ Reuse the same loader + dots animation styles
+import "./LoginPage.css"; // ✅ Reuse spinner + dots styles
 
 function AllProjectsPage() {
   const navigate = useNavigate();
@@ -11,8 +11,8 @@ function AllProjectsPage() {
   const [pageOpen, setPageOpen] = useState(1);
   const [pageClosed, setPageClosed] = useState(1);
   const [search, setSearch] = useState("");
-  const [loading, setLoading] = useState(true); // ✅ added loading state
-  const pageSize = 8; // ✅ show 8 projects per page
+  const [loading, setLoading] = useState(true); // ✅ show spinner initially
+  const pageSize = 8;
 
   useEffect(() => {
     fetch("https://smarttechsolutions-4df8.onrender.com/api/projects")
@@ -24,7 +24,7 @@ function AllProjectsPage() {
         });
       })
       .catch((err) => console.error("Error fetching projects:", err))
-      .finally(() => setLoading(false)); // ✅ stop loading when done
+      .finally(() => setLoading(false)); // ✅ stop loading
   }, []);
 
   // helper: paginate
@@ -43,56 +43,10 @@ function AllProjectsPage() {
   const totalPagesOpen = Math.ceil(openFiltered.length / pageSize) || 1;
   const totalPagesClosed = Math.ceil(closedFiltered.length / pageSize) || 1;
 
-  // ✅ Loading animation before projects are displayed
-
-if (loading) {
   return (
     <Layout>
-      {/* 🔹 Fullscreen dark overlay ABOVE everything */}
-      <div
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          width: "100vw",
-          height: "100vh",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          background: "rgba(0, 0, 0, 0.6)", // ✅ your preferred dark overlay
-          zIndex: 99999, // 🔥 ensures it's on top of everything
-        }}
-      >
-        <div className="loader"></div>
-        <div className="loading-row">
-          <p
-            className="loading-text"
-            style={{
-              color: "white",
-              fontSize: "1.1rem",
-              fontWeight: "600",
-              letterSpacing: "0.5px",
-            }}
-          >
-            Loading Projects
-          </p>
-          <div className="dots">
-            <div className="dot one"></div>
-            <div className="dot two"></div>
-            <div className="dot three"></div>
-          </div>
-        </div>
-      </div>
-    </Layout>
-  );
-}
-
-
-  return (
-    <Layout>
-      <div style={{ padding: "10px" }}>
-        {/* Header with search + counts */}
+      <div style={{ padding: "10px", position: "relative" }}>
+        {/* ======= HEADER + COUNTS (Always Visible) ======= */}
         <div
           style={{
             display: "flex",
@@ -148,16 +102,18 @@ if (loading) {
           </div>
         </div>
 
-        {/* ✅ Responsive Grid for Open/Closed Projects */}
+        {/* ======= GRID FOR OPEN/CLOSED PROJECTS ======= */}
         <div
           style={{
             display: "grid",
             gridTemplateColumns: "1fr 1fr",
             gap: "40px",
+            opacity: loading ? 0.3 : 1, // ✅ dim while loading
+            transition: "opacity 0.3s ease",
           }}
           className="projects-wrapper"
         >
-          {/* Open Projects */}
+          {/* OPEN PROJECTS */}
           <div>
             <h3
               style={{
@@ -167,7 +123,7 @@ if (loading) {
             >
               Open Projects
             </h3>
-            {openFiltered.length === 0 && (
+            {openFiltered.length === 0 && !loading && (
               <p style={{ color: "#666", fontStyle: "italic" }}>
                 No open projects.
               </p>
@@ -175,39 +131,40 @@ if (loading) {
             <div
               style={{ display: "flex", flexDirection: "column", gap: "10px" }}
             >
-              {paginate(openFiltered, pageOpen).map((proj) => (
-                <div
-                  key={proj.id}
-                  style={{
-                    background: "#ffffff",
-                    border: "1px solid #ddd",
-                    borderRadius: "10px",
-                    padding: "12px 16px",
-                    boxShadow: "0 2px 5px rgba(0,0,0,0.05)",
-                    cursor: "pointer",
-                    transition: "transform 0.2s, box-shadow 0.2s",
-                  }}
-                  onClick={() => navigate(`/quotation/${proj.id}`)}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = "translateY(-3px)";
-                    e.currentTarget.style.boxShadow =
-                      "0 4px 10px rgba(0,0,0,0.15)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = "translateY(0)";
-                    e.currentTarget.style.boxShadow =
-                      "0 2px 5px rgba(0,0,0,0.05)";
-                  }}
-                >
-                  <strong>
-                    {proj.projectName} — {proj.customerContact}
-                  </strong>
-                </div>
-              ))}
+              {!loading &&
+                paginate(openFiltered, pageOpen).map((proj) => (
+                  <div
+                    key={proj.id}
+                    style={{
+                      background: "#ffffff",
+                      border: "1px solid #ddd",
+                      borderRadius: "10px",
+                      padding: "12px 16px",
+                      boxShadow: "0 2px 5px rgba(0,0,0,0.05)",
+                      cursor: "pointer",
+                      transition: "transform 0.2s, box-shadow 0.2s",
+                    }}
+                    onClick={() => navigate(`/quotation/${proj.id}`)}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = "translateY(-3px)";
+                      e.currentTarget.style.boxShadow =
+                        "0 4px 10px rgba(0,0,0,0.15)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = "translateY(0)";
+                      e.currentTarget.style.boxShadow =
+                        "0 2px 5px rgba(0,0,0,0.05)";
+                    }}
+                  >
+                    <strong>
+                      {proj.projectName} — {proj.customerContact}
+                    </strong>
+                  </div>
+                ))}
             </div>
 
             {/* Pagination Open */}
-            {openFiltered.length > pageSize && (
+            {!loading && openFiltered.length > pageSize && (
               <div
                 style={{
                   marginTop: "12px",
@@ -236,7 +193,7 @@ if (loading) {
             )}
           </div>
 
-          {/* Closed Projects */}
+          {/* CLOSED PROJECTS */}
           <div>
             <h3
               style={{
@@ -246,7 +203,7 @@ if (loading) {
             >
               Closed Projects
             </h3>
-            {closedFiltered.length === 0 && (
+            {closedFiltered.length === 0 && !loading && (
               <p style={{ color: "#666", fontStyle: "italic" }}>
                 No closed projects.
               </p>
@@ -254,39 +211,42 @@ if (loading) {
             <div
               style={{ display: "flex", flexDirection: "column", gap: "10px" }}
             >
-              {paginate(closedFiltered, pageClosed).map((proj) => (
-                <div
-                  key={proj.id}
-                  style={{
-                    background: "#fafafa",
-                    border: "1px solid #ddd",
-                    borderRadius: "10px",
-                    padding: "12px 16px",
-                    boxShadow: "0 2px 5px rgba(0,0,0,0.05)",
-                    cursor: "pointer",
-                    transition: "transform 0.2s, box-shadow 0.2s",
-                  }}
-                  onClick={() => navigate(`/quotation-history/${proj.id}`)}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = "translateY(-3px)";
-                    e.currentTarget.style.boxShadow =
-                      "0 4px 10px rgba(0,0,0,0.15)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = "translateY(0)";
-                    e.currentTarget.style.boxShadow =
-                      "0 2px 5px rgba(0,0,0,0.05)";
-                  }}
-                >
-                  <strong>
-                    {proj.projectName} — {proj.customerContact}
-                  </strong>
-                </div>
-              ))}
+              {!loading &&
+                paginate(closedFiltered, pageClosed).map((proj) => (
+                  <div
+                    key={proj.id}
+                    style={{
+                      background: "#fafafa",
+                      border: "1px solid #ddd",
+                      borderRadius: "10px",
+                      padding: "12px 16px",
+                      boxShadow: "0 2px 5px rgba(0,0,0,0.05)",
+                      cursor: "pointer",
+                      transition: "transform 0.2s, box-shadow 0.2s",
+                    }}
+                    onClick={() =>
+                      navigate(`/quotation-history/${proj.id}`)
+                    }
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = "translateY(-3px)";
+                      e.currentTarget.style.boxShadow =
+                        "0 4px 10px rgba(0,0,0,0.15)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = "translateY(0)";
+                      e.currentTarget.style.boxShadow =
+                        "0 2px 5px rgba(0,0,0,0.05)";
+                    }}
+                  >
+                    <strong>
+                      {proj.projectName} — {proj.customerContact}
+                    </strong>
+                  </div>
+                ))}
             </div>
 
             {/* Pagination Closed */}
-            {closedFiltered.length > pageSize && (
+            {!loading && closedFiltered.length > pageSize && (
               <div
                 style={{
                   marginTop: "12px",
@@ -315,14 +275,38 @@ if (loading) {
             )}
           </div>
         </div>
+
+        {/* ======= OVERLAY LOADER (ON TOP) ======= */}
+        {loading && (
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              background: "rgba(0, 0, 0, 0.6)", // ✅ your preferred overlay
+              zIndex: 1000,
+            }}
+          >
+            <div className="loader"></div>
+            <div className="loading-row">
+              <p className="loading-text">Loading Projects</p>
+              <div className="dots">
+                <div className="dot one"></div>
+                <div className="dot two"></div>
+                <div className="dot three"></div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </Layout>
   );
 }
 
 export default AllProjectsPage;
-
-
-
-
-
