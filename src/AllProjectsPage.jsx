@@ -44,9 +44,15 @@ function AllProjectsPage() {
   const totalPagesClosed = Math.ceil(closedFiltered.length / pageSize) || 1;
 
   // ✅ Loading animation before projects are displayed
-if (loading) {
+
+
+
   return (
     <Layout>
+
+if (loading) {
+ 
+ 
       {/* 🔹 Fullscreen dark overlay ABOVE everything */}
       <div
         style={{
@@ -83,13 +89,9 @@ if (loading) {
           </div>
         </div>
       </div>
-    </Layout>
-  );
 }
 
-
-  return (
-    <Layout>
+      
       <div style={{ padding: "10px" }}>
         {/* Header with search + counts */}
         <div
@@ -320,6 +322,7 @@ if (loading) {
 }
 
 export default AllProjectsPage;
+
 
 
 
