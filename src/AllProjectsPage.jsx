@@ -2,7 +2,8 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Layout from "./Layout";
-import "./Layout.css"; // Ensure responsive styles and hamburger menu are available
+import "./Layout.css";
+import "./LoginPage.css"; // ✅ Reuse the same loader + dots animation styles
 
 function AllProjectsPage() {
   const navigate = useNavigate();
@@ -10,6 +11,7 @@ function AllProjectsPage() {
   const [pageOpen, setPageOpen] = useState(1);
   const [pageClosed, setPageClosed] = useState(1);
   const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true); // ✅ added loading state
   const pageSize = 8; // ✅ show 8 projects per page
 
   useEffect(() => {
@@ -21,7 +23,8 @@ function AllProjectsPage() {
           closed: data.filter((p) => p.status === "closed"),
         });
       })
-      .catch((err) => console.error("Error fetching projects:", err));
+      .catch((err) => console.error("Error fetching projects:", err))
+      .finally(() => setLoading(false)); // ✅ stop loading when done
   }, []);
 
   // helper: paginate
@@ -39,6 +42,34 @@ function AllProjectsPage() {
 
   const totalPagesOpen = Math.ceil(openFiltered.length / pageSize) || 1;
   const totalPagesClosed = Math.ceil(closedFiltered.length / pageSize) || 1;
+
+  // ✅ Loading animation before projects are displayed
+  if (loading) {
+    return (
+      <Layout>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            height: "80vh",
+            color: "white",
+          }}
+        >
+          <div className="loader"></div>
+          <div className="loading-row">
+            <p className="loading-text">Loading Projects</p>
+            <div className="dots">
+              <div className="dot one"></div>
+              <div className="dot two"></div>
+              <div className="dot three"></div>
+            </div>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
@@ -217,9 +248,7 @@ function AllProjectsPage() {
                     cursor: "pointer",
                     transition: "transform 0.2s, box-shadow 0.2s",
                   }}
-                  onClick={() =>
-                    navigate(`/quotation-history/${proj.id}`)
-                  }
+                  onClick={() => navigate(`/quotation-history/${proj.id}`)}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.transform = "translateY(-3px)";
                     e.currentTarget.style.boxShadow =
@@ -274,4 +303,3 @@ function AllProjectsPage() {
 }
 
 export default AllProjectsPage;
-
