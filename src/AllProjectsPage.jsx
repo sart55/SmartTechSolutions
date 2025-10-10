@@ -44,33 +44,40 @@ function AllProjectsPage() {
   const totalPagesClosed = Math.ceil(closedFiltered.length / pageSize) || 1;
 
   // ✅ Loading animation before projects are displayed
-  if (loading) {
-    return (
-      <Layout>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            height: "80vh",
-            background: "linear-gradient(135deg, #000000 0%, #6bc7f2 100%)",
-            color: "white",
-          }}
-        >
-          <div className="loader"></div>
-          <div className="loading-row">
-            <p className="loading-text">Loading Projects</p>
-            <div className="dots">
-              <div className="dot one"></div>
-              <div className="dot two"></div>
-              <div className="dot three"></div>
-            </div>
+if (loading) {
+  return (
+    <Layout>
+      <div
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          background: "rgba(255, 255, 255, 0.7)", // ✅ semi-transparent overlay
+          backdropFilter: "blur(2px)",
+          zIndex: 9999,
+        }}
+      >
+        <div className="loader"></div>
+        <div className="loading-row">
+          <p className="loading-text" style={{ color: "#203040" }}>
+            Loading Projects
+          </p>
+          <div className="dots">
+            <div className="dot one" style={{ background: "#203040" }}></div>
+            <div className="dot two" style={{ background: "#203040" }}></div>
+            <div className="dot three" style={{ background: "#203040" }}></div>
           </div>
         </div>
-      </Layout>
-    );
-  }
+      </div>
+    </Layout>
+  );
+}
 
   return (
     <Layout>
@@ -304,4 +311,5 @@ function AllProjectsPage() {
 }
 
 export default AllProjectsPage;
+
 
